@@ -1,0 +1,9 @@
+
+{% if settings.currency_enable %}
+<span id="currencies">
+	{% assign supported = settings.supported_currencies | split: ' ' %}
+	{% for c in supported %}
+		<a data-currency="{{c}}" rel="nofollow" href="javascript:void(0);">{{c}}</a>
+	{% endfor %}
+</span>
+{% endif %}

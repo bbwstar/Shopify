@@ -1,0 +1,251 @@
+<!-- /templates/article.liquid -->
+{% comment %}
+
+  Comments will not appear right after they are submitted, either to be checked for spam
+  or to await moderation. When a comment is submitted, the browser is redirected to a page
+  that includes the new comment id in its URL.
+    Example: http://shopname.myshopify.com/blogs/news/2022072-my-post?comment=3721372
+
+  More information:
+    - http://docs.shopify.com/themes/liquid-variables/comment
+
+{% endcomment %}
+
+{% assign number_of_comments = article.comments_count %}
+
+{% comment %}
+  If a comment was just submitted and it has no blank fields, we have an extra comment to count.
+{% endcomment %}
+{% if comment and comment.created_at %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+
+<div class="grid">
+
+  <article class="grid__item large--three-quarters post-details" itemscope itemtype="http://schema.org/Article">
+
+    <div class="posts-image">
+      {% if article.image %}
+        <a href="{{ article.url }}" title="" class="post-thumbnail">
+          <img src="{{ article.image.src | img_url: 'original' }}" alt="" class="img-responsive">
+        </a>
+      {% endif %}
+      <span class="category">
+        {{ blog.title | link_to: blog.url }}
+      </span>
+    </div>
+    <div class="posts-title">
+      <h1 class="entry-title">{{ article.title }}</h1>
+      <div class="entry-meta ">
+
+        <span class="time">{{article.published_at | date: " %d" }}  {{article.published_at | date: "%B" }} , {{article.published_at | date: " %Y" }} / </span>
+        {% capture author %}<span>{{ article.author }}</span>{% endcapture %}
+                <span class="entry-meta-author">{{ author }}</span>
+        
+        {% if blog.comments_enabled? %}
+        <span class="entry-meta-comment"> /
+          <a href="{{ article.url }}#comments">
+            {{ 'blogs.comments.comments_with_count' | t: count: article.comments_count }}
+          </a>
+        </span>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="" itemprop="articleBody">
+      {{ article.content }}
+    </div>
+
+    {% comment %}
+      Show off meta information like comments and tags.
+    {% endcomment %}
+    <ul class="inline-list">
+      {% include 'tags-article' %}
+    </ul>
+
+    <!-- social share -->
+    {% if settings.blog_detail_share %}
+      {% capture permalinkURL %}{{ shop.url }}{{ article.url }}{% endcapture %}
+      {% capture shareTitle %}{{ article.title | url_param_escape }}{% endcapture %}
+
+      <div class="post-social clearfix">
+      {% if settings.blog_detail_share_title %}
+        <span class="social-share">{{ settings.blog_detail_share_title }}</span>
+      {% endif %}
+      <div class="right social-inner">
+      {% if settings.blog_detail_share_facebook %}
+        <a class="bo-social-facebook" data-toggle="tooltip" data-placement="top" data-animation="true"  data-original-title="Facebook" href="http://www.facebook.com/sharer.php?s=100&p&#91;url&#93;={{ permalinkURL }}&p&#91;title&#93;={{ shareTitle }}" target="_blank" title="Facebook">
+          <i class="fa fa-facebook"></i>
+        </a>
+      {% endif %}
+
+      {% if settings.blog_detail_share_twitter %}
+        <a  href="//twitter.com/share?text={{ shareTitle }}&amp;url={{ permalinkURL }}" data-toggle="tooltip" title="Twitter"><i class="fa fa-twitter"></i></a>
+      {% endif %}
+
+      {% if settings.blog_detail_share_google %}
+        <a  href="//plus.google.com/share?url={{ permalinkURL }}" data-toggle="tooltip" title="Google+"><i class="fa fa-google-plus"></i></a>
+      {% endif %}
+
+      {% if settings.blog_detail_share_pinterest %}
+        {% if product.featured_image or article.image %}
+          <a  href="//pinterest.com/pin/create/button/?url={{ permalinkURL }}&amp;media=http:{% if template contains 'product' %}{{ product | img_url: '1024x1024' }}{% else %}{{ article | img_url: '1024x1024' }}{% endif %}&amp;description={{ shareTitle }}" data-toggle="tooltip" title="Pinterest"><i class="fa fa-pinterest"></i></a>
+        {% endif %}
+      {% endif %}
+      </div>
+      </div>
+    {% endif %}
+
+
+    {% comment %}
+      Create links to the next and previous articles, if available.
+    {% endcomment %}
+
+    {% assign current_found = false %}
+    {% assign done = false %}
+    {% for a in blog.articles %}
+      {% if current_found and done == false %}
+        {% assign next_article = a %}
+        {% assign done = true %}
+      {% endif %}
+      {% unless done %}
+        {% if a.id == article.id %}
+          {% assign current_found = true %}
+        {% else %}
+          {% assign prev_article = a %}
+        {% endif %}
+      {% endunless %}
+    {% endfor %}
+    <div class="grid ">
+      <div class="panigition clearfix">
+        <div class="grid__item large--one-half">
+          {% if prev_article %}
+          <div class="post-inner prev media">
+            <div class="blog-image-thumb media-left">
+              <a href="{{ prev_article.url }}" title="" class="post-thumbnail">
+                <img src="{{ prev_article.image.src | img_url: 'medium' }}" alt="" class="img-responsive">
+              </a>
+            </div>
+            <div class="media-body">
+              <h3 class="entry-title-sm"><a href="{{ prev_article.url }}">{{ prev_article.title | escape }}</h3>
+                <span class="blog-date">{{ prev_article.published_at | date: '%b %d, %Y' }}</span>
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="grid__item large--one-half">
+          {% if next_article %}
+          <div class="post-inner next media">
+            <div class="blog-image-thumb  media-left">
+              <a href="{{ next_article.url }}" title="" class="post-thumbnail">
+                <img src="{{ next_article.image.src | img_url: 'medium' }}" alt="" class="img-responsive">
+              </a>
+            </div>
+            <div class="media-body">
+              <h3 class="entry-title-sm"><a href="{{ next_article.url }}">{{ next_article.title | escape }}</h3>
+                <span class="blog-date">{{ next_article.published_at | date: '%b %d, %Y' }}</span>
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if blog.comments_enabled? %}
+      <div class="widget widget-comments">
+        <h3 class="widget-title title-comment ">{{ 'blogs.comments.comments_with_count' | t: count: number_of_comments }}</h3>
+      </div>
+      {% comment %}
+        Just like blog.liquid page, define how many comments should be on each page.
+      {% endcomment %}
+      {% paginate article.comments by 5 %}
+        {% comment %}
+          #comments is required, it is used as an anchor link by Shopify.
+        {% endcomment %}
+        <div id="comments">
+
+          {% if comment and comment.created_at %}
+            <p class="note form-success">
+              {% if blog.moderated? %}
+                {{ 'blogs.comments.success_moderated' | t }}
+              {% else %}
+                {{ 'blogs.comments.success' | t }}
+              {% endif %}
+            </p>
+          {% endif %}
+
+          {% if number_of_comments > 0 %}
+            <ul class="no-bullets">
+              {% comment %}
+                If a comment was just submitted with no blank field, show it.
+              {% endcomment %}
+              {% if comment and comment.created_at %}
+                <li id="{{ comment.id }}" class="comment first{% if article.comments_count == 0 %} last{% endif %}">
+                  {% include 'comment' %}
+                </li>
+              {% endif %}
+
+              {% comment %}
+                Showing the rest of the comments.
+              {% endcomment %}
+              {% for comment in article.comments %}
+                <li id="{{ comment.id }}" class="comment{% unless number_of_comments > article.comments_count %}{% if forloop.first %} first{% endif %}{% endunless %}{% if forloop.last %} last {% endif %}">
+                  {% include 'comment' %}
+                </li>
+
+              {% endfor %}
+            </ul>
+
+            {% if paginate.pages > 1 %}
+              <div class="pagination">
+                {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+              </div>
+            {% endif %}
+
+          {% endif %}
+
+          <div class="form-vertical">
+            {% form 'new_comment', article %}
+              <h3>{{ 'blogs.comments.title' | t }}</h3>
+
+              {{ form.errors | default_errors }}
+
+              <div class="grid form-comment">
+
+                <div class="grid__item ">
+                <div class="grid">
+
+                  <div class="grid__item large--one-half">
+                    <input type="text" name="comment[author]" id="CommentAuthor" class="input-full{% if form.errors contains 'author' %} error{% endif %}" placeholder="{{ 'blogs.comments.name' | t }}" value="{{ form.author }}" autocapitalize="words">
+                  </div>
+                  <div class="grid__item large--one-half">
+                    <input type="email" name="comment[email]" id="CommentEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" placeholder="{{ 'blogs.comments.email' | t }}" value="{{ form.email }}" autocorrect="off" autocapitalize="off">
+                  </div>
+                </div>
+
+                <textarea name="comment[body]" id="CommentBody" class="input-full{% if form.errors contains 'body' %} error{% endif %}" rows="6" placeholder="{{ 'blogs.comments.message' | t }}">{{ form.body }}</textarea>
+
+                </div>
+
+              </div>
+
+              {% if blog.moderated? %}
+                <p>{{ 'blogs.comments.moderated' | t }}</p>
+              {% endif %}
+              <button class="btn btn-primary" type="submit">{{ 'blogs.comments.post' | t }}</button>
+              {% endform %}
+          </div>
+
+        </div>
+      {% endpaginate %}
+    {% endif %}
+
+  </article>
+
+  <aside class="sidebar grid__item large--one-quarter" role="complementary">
+    {% include 'blog-sidebar' %}
+  </aside>
+</div>

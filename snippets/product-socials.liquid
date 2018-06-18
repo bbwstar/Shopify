@@ -1,0 +1,27 @@
+{% capture permalinkURL %}{{ shop.url }}{{ product.url }}{% endcapture %}
+{% capture shareTitle %}{{ product.title | url_param_escape }}{% endcapture %}
+
+
+{% if settings.product_detail_social_title %}
+  <label class="social-share">{{ settings.product_detail_social_title }}</label>
+{% endif %}
+
+{% if settings.product_detail_facebook %}
+  <a class="bo-social-facebook" data-toggle="tooltip" data-placement="top" data-animation="true"  data-original-title="Facebook" href="http://www.facebook.com/sharer.php?s=100&p&#91;url&#93;={{ permalinkURL }}&p&#91;title&#93;={{ shareTitle }}" target="_blank" title="Facebook">
+    <i class="fa fa-facebook"></i>
+  </a>
+{% endif %}
+
+{% if settings.product_detail_twitter %}
+  <a  href="//twitter.com/share?text={{ shareTitle }}&amp;url={{ permalinkURL }}" data-toggle="tooltip" title="Twitter"><i class="fa fa-twitter"></i></a>
+{% endif %}
+
+{% if settings.product_detail_google_plus %}
+  <a  href="//plus.google.com/share?url={{ permalinkURL }}" data-toggle="tooltip" title="Google+"><i class="fa fa-google-plus"></i></a>
+{% endif %}
+
+{% if settings.product_detail_pinterest %}
+  {% if product.featured_image or article.image %}
+    <a  href="//pinterest.com/pin/create/button/?url={{ permalinkURL }}&amp;media=http:{% if template contains 'product' %}{{ product | img_url: '1024x1024' }}{% else %}{{ article | img_url: '1024x1024' }}{% endif %}&amp;description={{ shareTitle }}" data-toggle="tooltip" title="Pinterest"><i class="fa fa-pinterest"></i></a>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,84 @@
+<!-- /snippets/header2.liquid -->
+
+<div class="site-header-logo main-sticky-header clearfix">
+  <div class="wrapper">
+    <div class="p-relative clearfix">
+      <div class="logo left">
+        {% if template == 'index' %}
+          <h1 class="site-header__logo" itemscope itemtype="http://schema.org/Organization">
+        {% else %}
+          <div class="h1 site-header__logo" itemscope itemtype="http://schema.org/Organization">
+        {% endif %}
+          {% if settings.logo_use_image %}
+            <a href="/" itemprop="url" class="site-header__logo-link">
+              <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" itemprop="logo">
+            </a>
+          {% else %}
+            <a href="/" itemprop="url">{{ shop.name }}</a>
+          {% endif %}
+        {% if template == 'index' %}
+          </h1>
+        {% else %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="site-header-mainmenu left">
+        <div class="site-header-mainmenu-inner">
+        <div class="wrapper">
+          <div class="header-nav">
+                <nav class="nav-bar" role="navigation">
+                  {% include 'menu' %}
+                </nav>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="header1">
+      <div class="header-settings right">
+            <!-- search -->
+            <div class="site-header__search medium-down--hide dropdown">
+              {% include 'search-bar' %}
+            </div>
+            
+            <!-- cart top -->
+            <div class="cart-top ">
+              <a href="/cart" class="site-header__cart-toggle js-drawer-open-right" aria-controls="CartDrawer" aria-expanded="false">
+                <span id="CartCount">{{ cart.item_count }}</span>
+                <!--
+                {{ 'layout.cart.items_count' | t: count: cart.item_count }}
+                <span id="CartCost">{{ cart.total_price | money }}</span>
+                -->
+              </a>
+
+            </div>
+            <div class="dropdown" id="settings">
+             <span data-toggle="dropdown" class="dropdown-toggle"><i class="icon-setting fa fa-cog"></i></span>
+              <div class="dropdown-menu dropdown-menu-right">
+                
+                  <ul>
+                     {% if customer %}
+                      {% if customer.first_name != blank %}
+                        {% capture first_name %}<a href="/account">{{ customer.first_name }}</a>{% endcapture %}
+                        <li>{{first_name: first_name }}</li>
+                      {% else %}
+                        <li><a href="/account">{{ 'layout.customer.account' | t }}</a></li>
+                      {% endif %}
+
+                        <li>{{ 'layout.customer.log_out' | t | customer_logout_link }}</li>
+                    {% else %}
+                      <li>{{ 'layout.customer.log_in' | t | customer_login_link }}</li>
+                      {% if shop.customer_accounts_optional %}
+                        <li>{{ 'layout.customer.create_account' | t | customer_register_link }}</li>
+                      {% endif %}
+                    {% endif %}
+                    <li><a href="/wish-list">{{ 'layout.customer.wishlist' | t }}</a></li>
+                    <li><a href="/cart">{{ 'layout.customer.checkout' | t }}</a></li>
+                  </ul>
+
+              </div>
+            </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>

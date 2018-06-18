@@ -1,0 +1,92 @@
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+  {% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+  {% assign sold_out = false %}
+{% endif %}
+
+  <div class="grid layout-list1 large--display-table product-container">
+  <div class="product-container-inner">
+    <div class="images-list grid__item large--one-half medium--one-half">
+      <div class="product-thumbnail">
+        <a href="{{ product.url | within: collection }}">
+          <img src="{{ product.featured_image.src | img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}" class="grid__image">
+        </a>
+        <!-- quickview -->
+        <a href="{{ product.url | within: collection }}" data-id="{{ product.handle }}"  class="product-quick-view btn-quickview" title="">
+            <i class="fa fa-eye"></i>
+        </a>
+      </div>
+    </div>
+    <div class="info grid__item large--one-half medium--one-half">
+        <h4 class="product-name">
+          <a href="{{ product.url | within: collection }}" title="{{ product.title }}" >{{ product.title }}</a>
+        </h4><!-- /.product-product -->
+
+        <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+
+        <div class="product-price">
+          {% if on_sale %}
+            {% if product.price_varies %}
+              {% assign sale_price = product.price | money %}
+              {{ sale_price }}
+            {% else %}
+              <strong class="hidden">{{ 'products.product.on_sale' | t }}</strong>
+              {{ product.price | money }}
+            {% endif %}
+          {% else %}
+            {% if product.price_varies %}
+              {% assign price = product.price | money %}
+              {{ price }}
+            {% else %}
+              {{ product.price | money }}
+            {% endif %}
+          {% endif %}
+
+          {% if sold_out %}
+            <strong>{{ 'products.product.sold_out' | t }}</strong>
+          {% endif %}
+
+          {% if on_sale %}
+            <span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span><del class="sale-price">{{ product.compare_at_price | money }}</del>
+          {% endif %}
+        </div>
+
+        <div class="action">
+
+          <div class="add-cart">
+            <form method="post" action="/cart/add" data-productid="{{product.id}}"  class="add-to-cart"> 
+ {% if product.available %}{% include 'subscription-product' %}{% endif %} 
+              <input type="hidden" name="id" data-productid="{{product.id}}" value="{{ product.variants.first.id }}" />
+              <!-- <input type="submit" value="Buy now" class="btn" /> -->
+              {% assign variantCount = product.variants | size %}
+              {% if sold_out %}
+                <button class="button ajax_addtocart disabled btn btn-outline btn-primary" type="submit" value="Submit" disabled>
+                  <span class="fa fa-shopping-cart"></span>
+                  <span>{{ 'products.product.sold_out' | t }}</span>
+                </button>
+                {% else %}
+                {% if variantCount > 1 %}
+                <a class="button ajax_addtocart btn btn-outline btn-primary product-add-cart" href="{{ product.url | within: collection }}" title="{{ product.title | escape }}">
+                  <span class="select_options">{{ 'products.product.select_options' | t }}</span>
+                </a>
+                {% else %}
+                <button type="submit" name="add" id="AddToCart{{ product.id }}" class="btn btn-outline btn-primary product-add-cart">
+                  {{ 'products.product.add_to_cart' | t }}
+                </button>
+                {% endif %}
+              {% endif %}
+            </form>
+          </div>
+          <!-- wishlist -->
+          {%include 'add-wishlist'%}
+          <a href="{{ product.url | within: collection }}" title="{{ product.title }}" data-id="{{ product.handle }}"  class="btn btn-outline btn-primary btn-details" >
+              <i class="fa fa-tag"></i>
+          </a>
+        </div>
+    </div>
+  </div>
+  </div>

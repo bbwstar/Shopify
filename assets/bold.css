@@ -1,0 +1,115 @@
+/* Last updated: January 6, 2017 */
+/* CHANGED: Added css for Recurring Memberships modal /*
+/* BOLD.CSS
+  To include this file in your theme, add the following before the closing </head> tag in theme.liquid
+  {{ 'bold.css' | asset_url | stylesheet_tag }}
+*/
+/* ~=====  LOYALTY POINTS =====~ */
+/* Product Page */
+.bold-loyalties-redeem a.buy-with-rewards { }
+.bold-loyalties-redeem-amount { }
+/* Purchase Modal */
+a.btn.btn--secondary.bold-modal-close-btn { }
+input.btn.continue_btn { }
+/* Header Callout nav */
+.bold-loyalties-callout-nav { }
+.bold-loyalties-callout-nav a { }
+
+
+/* ~=====  PRODUCT OPTIONS =====~ */
+/* Product Page */
+.shappify_check_option { float: left; clear: both; }
+.shappify_radio_option { float: left; clear: both; }
+
+/* Cart Page */
+.bold-master {}
+.bold-hidden { display: none!important; }
+.bold-properties {}
+.bold_option_line {}
+.bold_option_title {}
+.bold_option_seperator {}
+.bold_option_value {}
+/* Edit-in-cart modal */
+#bold-cart-modal {}
+#bold-cart-modal .modal-content {}
+#bold-cart-modal .modal-dialog{}
+#bold-cart-modal .modal-body {}
+#bold-cart-modal .bold-image img{ margin:0 auto 10px; display:block; }
+#bold-cart-modal .bold-price { text-align:center; font-size:17px; font-weight:900; }
+#bold-cart-modal .bold-title { text-align:center; font-size:17px; font-weight:900; }
+#bold-cart-modal .bold-desc { text-align:center; }
+#bold-cart-modal .bold-options{ padding:10px; }
+#bold-cart-modal .modal-footer-buttons{ text-align:center; margin-top:10px; }
+
+/* ~=====  RECURRING ORDERS =====~ */
+/* Cart Page */
+.bold_recurring_desc {}
+.bold_ro_every {}
+.bold_ro_frequency_num {}
+.bold_ro_frequency_type_text{}
+.discounted_price_in_cart{}
+
+/* ~=====  BUY THE MEASURE =====~ */
+/* Cart Page */
+.bold-inline-hidden { opacity: 0; }
+
+/* Product Page */
+.field_div label {
+    /* Prevent input elements from being on own line */
+    display: inline-block !important;
+    width: 80px !important;
+}
+.field_div input {
+    width: 50px !important;
+    display: inline-block !important;
+    margin-right: 5px !important;
+}
+
+/* ~===== PRODUCT BUNDLES =====~ */
+/*
+This URL shows an image illustrating the following classes/IDs for the Bundle widget:
+p4.zdassets.com/hc/theme_assets/320170/200005966/bundle_widget_CSS.png
+*/
+
+
+/* Product Page */
+.product-bundle .product-image img {
+    /* Prevent bundle widget images spilling out of containers  */
+    max-height: 120px !important;
+}
+
+.bundle-form {}
+.bundle-title {}
+.bundle-form .product-wrapper {}
+.bundle-name {}
+.bundle-form .product-options {}
+.bundle-form .sale {}
+.bundle-form .regular {}
+.bundle-total button {}
+.bundle-total button top-button {}
+.bundle-plus img {}
+.bundle-form .product-image {}
+.bundle-form .product-image img {}
+
+/* ~===== RECURRING MEMBERSHIP =====~ */
+/* Override CSS to render modal.       */
+.modal-open {
+    overflow: visible !important;
+    opacity: 1 !important;
+    z-index: 1051 !important;
+}
+
+.modal-open .modal {
+    display: block !important;
+    opacity: 1 !important;
+    z-index: 1052 !important;
+    background-color: transparent;
+}
+
+.modal {
+    display: none;
+}
+/* .grid--rev .ro_widget
+{
+  display: none;
+} */

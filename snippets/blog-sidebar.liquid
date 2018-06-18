@@ -1,0 +1,85 @@
+<!-- /snippets/blog-sidebar.liquid -->
+
+{% if settings.blog_sidebar_search_enable %}
+  <div class="widget-search widget">
+    <h3 class="widget-title">{{ settings.blog_sidebar_search_title }}</h3>
+    <form method="get" action="/search" class="input-group search">
+      <input class="searchBox field form-control" type="text" placeholder="Search Here" name="q"{% if search.performed %} value="{{ search.terms | escape | downcase }}"{% endif %} /> 
+      <div class="input-group-btn">
+      <input type="hidden" name="type" value="article" />
+      <button class="searchSubmit btn" type="submit"> <i class="icon icon-search"></i></button>
+      </div>
+    </form>
+  </div>
+{% endif %}
+{% if settings.blog_sidebar_categories_enable %}
+  <div class="widget-categories widget">
+    <h3 class="widget-title">{{ settings.blog_sidebar_categories_title }}</h3>
+    <ul class="list-icon">
+      {% for link in linklists[settings.blog_sidebar_categories_menu].links %}
+      	<li><a href="{{ link.url }}">{{ link.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% if settings.blog_sidebar_latest_enable %}
+  <div class="widget">
+    <h3 class="widget-title">{{ settings.blog_sidebar_latest_title }}</h3>
+    {% assign collection_1 = collections[settings.blog_sidebar_products_collection] %}
+    <div class="list style-sidebar">
+      {% for article in blogs.news.articles limit: settings.blog_sidebar_latest_number %}
+
+        <div class="latest-posts-body">
+          <div class="media">
+            {% if article.image %}
+            <div class="posts-image media-left">
+              <a href="{{ article.url }}" title="">
+                <img src="{{ article.image.src | img_url: 'original' }}" alt="" class="img-responsive">
+              </a>
+            </div>
+            {% endif %}
+            <div class="info-absolute media-body">
+              <div class="posts-title">
+                <h4 class="entry-title">
+                  <a href="{{ article.url }}" title="{{ article.title }}">{{ article.title }}</a>
+                </h4>
+                <div class="entry-meta">
+                  <span class="time">{{article.published_at | date: " %d" }}  {{article.published_at | date: "%B" }} , {{article.published_at | date: " %Y" }}</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      {% endfor %}
+    </div>
+  </div> <!-- end widget 1 -->
+{% endif %}
+
+{% if settings.blog_sidebar_text_widget_enable %}
+  <div class="widget">
+    <h3 class="widget-title">{{ settings.blog_sidebar_text_widget_title }}</h3>
+    {% assign collection_1 = collections[settings.blog_sidebar_products_collection] %}
+    <div class="widget__content">
+      {{ settings.blog_sidebar_text_widget_content }}
+    </div>
+  </div> <!-- end widget 1 -->
+{% endif %}
+
+{% if settings.blog_sidebar_tags_enable and settings.blog_sidebar_tags_menu %}
+
+<div class="widget-tags widget">
+  <h4 class="widget-title">{{ 'collections.sidebar.tags' | t }}</h4>
+  <ul class="widget__content tags">
+
+      {% assign _links_name = settings.blog_sidebar_tags_menu %}
+      {% for link in linklists[_links_name].links %}
+      	<li><a href="{{ link.url }}">{{ link.title }}</a></li>
+      {% endfor %}
+    
+  </ul>
+
+</div> <!-- end tags -->
+{% endif %}

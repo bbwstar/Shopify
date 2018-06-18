@@ -1,0 +1,93 @@
+{% unless current_collection == blank %}
+{% assign current_collection = collection %}
+{% endunless %}
+
+{% assign label_new = false %}
+
+{% assign on_sale = false %}
+{% if product.compare_at_price > product.price %}
+{% assign on_sale = true %}
+{% endif %}
+
+{% assign sold_out = true %}
+{% if product.available %}
+{% assign sold_out = false %}
+{% endif %}
+
+
+	<div id="product-{{ product.id }}" class="product-container style2 clearfix" data-publish-date="{{ product.published_at }}">
+		<div class="product-container-inner">
+			<div class="product-image ">
+				<div class="product-thumbnail">
+					<a href="{{ product.url | within: collection }}" title="">
+						<img class="product-featured-image" src="{{ product.featured_image.src | img_url: 'grande' }}" alt="{{ product.featured_image.alt | escape }}">
+					</a>
+
+				</div><!-- /.product-thumbnail -->
+				
+				{% if sold_out%}
+							<span class="label sold-out">{{'products.product.sold_out' | t}}</span>
+				{% endif %}
+
+				{% if on_sale %}
+							<span class="label on-sale">{{'products.product.on_sale' | t}}</span>
+				{% endif %}
+
+				{% if label_new %}
+							<span class="label new">{{'products.product.new' | t}}</span>
+				{% endif %}
+				
+              	{% include 'block-product-color' %}
+			</div><!-- /.product-image -->
+			
+			<div class="product-actions" >
+              
+				{%include 'add-wishlist'%}
+				<form method="post" action="/cart/add" data-productid="{{product.id}}"  class="add-to-cart"> 
+ 					<div class="no_ro_widget ro_widget"></div>
+					<!-- <input type="submit" value="Buy now" class="btn" />
+					<!-- bold-ro-liquid --><div class="bold_add_to_orders"></div><!-- bold-ro-liquid -->
+					
+                  	{% assign variantCount = product.variants | size %}
+                  	{% if sold_out %}
+                        <button class="button ajax_addtocart disabled btn" type="submit" value="Submit" disabled>
+                          <span class="fa fa-shopping-cart"></span>
+                        </button>
+                      {% else %}
+                      {% if variantCount > 1 %}
+                        <a class="button ajax_addtocart btn product-add-cart" href="{{ product.url | within: collection }}" title="{{ product.title | escape }}">
+                          <span class="select_options"><i class="fa fa-shopping-cart"></i></span>
+                        </a>
+                      {% else %}
+                      	<button type="submit" name="add" id="AddToCart{{ product.id }}" class="btn product-add-cart">
+							<i class="fa fa-shopping-cart"></i>
+                  		</button>
+                      {% endif %}
+                  	{% endif %}
+				</form>
+
+				<a href="{{ product.url | within: collection }}" data-id="{{ product.handle }}"  class="product-quick-view btn-quickview btn" title="Quickview">
+					    <i class="fa fa-expand"></i>
+				</a>
+
+			</div>
+			
+		</div>
+		<div class="information">
+			<h4 class="product-name">
+				<a href="{{ product.url | within: collection }}" title="{{ product.title }}" >{{ product.title }}</a>
+			</h4><!-- /.product-product -->
+
+			<div class="product-price">
+				<span class="amout">
+					{% capture price %}{{ product.price | money }}{% endcapture %}
+					<span >{% if product.price_varies %}{{ 'products.general.from_text_html' | t: price: price }}{% else %}{{ price }}{% endif %}</span>
+					{% if on_sale %} <del class="sale-price">{{ product.compare_at_price | money }}</del> {% endif %}
+				</span>
+			</div><!-- /.product-price -->
+			<!-- review -->
+		</div>
+		{% if dealTime %}
+	        {% include 'block-productdeal' %}
+	    {% endif %}
+	</div> <!-- product-container -->

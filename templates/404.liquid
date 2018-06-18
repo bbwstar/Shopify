@@ -1,0 +1,29 @@
+<!-- /templates/404.liquid -->
+{% capture _image %}notfound_page_image.jpg{% endcapture %}
+
+<div class="text-center wrapper-inner" style="background:url({{ _image | asset_url }}) no-repeat center center;">
+<div class="wrapper">
+  <h1>{{ settings.notfound_page_title }}</h1>
+  <p class="sub-title">{{ settings.notfound_page_content }}</p>
+  
+  {% if settings.notfound_page_show_newsletter %}
+  	<p>{{ settings.notfound_page_newsletter_desc }}</p>
+  	
+    {% if settings.footer_block_4_newsletter_form_action != blank %}
+        {% assign form_action = settings.footer_block_4_newsletter_form_action %}
+    {% else %}
+        {% assign form_action = '#' %}
+    {% endif %}
+    <form action="{{ form_action }}" method="post" target="_blank" class="input-group">
+      <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" name="EMAIL" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" class="newsletter-input input-group-field" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}" >
+      <span class="input-group-btn">
+        <input type="submit" class="button_mini btn btn-primary btn-more" value="{{ 'general.newsletter_form.submit' | t }}">
+      </span>
+    </form>
+  {% endif %}
+  
+  {% if settings.notfound_page_button %}
+  	<a href="{{shop.url}}" class="back" title="{{ settings.notfound_page_button | strip_html }}">{{ settings.notfound_page_button }} <i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+  {% endif %}
+</div>
+</div>

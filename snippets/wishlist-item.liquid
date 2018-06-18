@@ -1,0 +1,31 @@
+{% if customer %}
+	{% capture value %}{{ product.id }}{% endcapture %}
+	{% capture productID %}{{ product.id }}{% endcapture %}
+	{% for tag in customer.tags %}
+		{% capture tagID %}{{ tag }}{% endcapture %}
+		{% if tagID contains productID %}
+			{% assign value = 'x' | append:tag %}
+		{% endif %}
+	{% endfor %}
+
+	{% assign check = value.size | minus:productID.size | modulo:2 %}
+	{% if check == 0 %}{% assign display_button = true %}{% else %}{% assign display_button = false %}{% endif %}
+
+	{% if display_button %}
+		{% form 'customer' %}
+			<input type="hidden" name="contact[email]" value="{{ customer.email }}"/>
+			<input type="hidden" name="contact[tags]" value="{{ value }}" />
+            <ul class="add-to-links">
+              <li><a href="{{pages[settings.wishlist_page].url}}" class="link-wishlist add-to-wishlist" data-id="{{product.id}}" data-added="{{'wish_list.general.browse_wishlist' | t}}"><i class="fa fa-heart"></i>{{'wish_list.general.add_to_wishlist' | t}}</a></li>
+            </ul>
+		{% endform %}
+	{% else %}
+      <ul class="add-to-links">
+        <li><a href="{{pages[settings.wishlist_page].url}}" class="link-wishlist added"><i class="fa fa-heart"></i>{{'wish_list.general.add_to_wishlist' | t}}</a></li>
+      </ul>
+	{% endif %}
+{% else %}
+	<ul class="add-to-links">
+      <li><a href="/account/login" class="link-wishlist" title="{{'wish_list.general.add_to_wishlist' | t}}"><i class="fa fa-heart"></i>{{'wish_list.general.add_to_wishlist' | t}}</a></li>
+	</ul>
+{% endif %}

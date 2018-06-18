@@ -1,0 +1,18 @@
+{% assign dealTag = true %}
+{% for tag in product.tags %}
+    {% if tag contains 'dealday' %}
+        {% assign dealTag = false %}
+        {% assign dealProTime = tag | replace: 'dealday','' | replace: '_',' ' %}
+        <div class="deal-timmer" data-countdown="countdown" data-datetime="{{ dealProTime }}"></div>
+    {% endif %}
+{% endfor %}
+{% if dealTag %}
+    {% for dealPro in dealTime %}
+        {% capture currentProducID %}{{ product.id }}@{% endcapture %}
+        {% if dealPro contains currentProducID %}
+            {% assign dealProTime = dealPro | replace: currentProducID,'' | replace: '_',' ' %}
+            <div class="deal-timmer" data-countdown="countdown" data-datetime="{{ dealProTime }}"></div>
+            {% break %}
+        {% endif %}
+    {% endfor %}
+{% endif %}

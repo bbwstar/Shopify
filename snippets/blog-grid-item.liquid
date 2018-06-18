@@ -1,0 +1,56 @@
+<!-- /snippets/blog-grid-item.liquid -->
+{% case settings.nb_column %}
+	{% when '2' %}
+		 {% capture grid_item_width %} large--one-half medium--one-half {% endcapture %}
+	{% when '3' %}
+		 {% capture grid_item_width %} large--one-third medium--one-half {% endcapture %}
+	{% when '4' %}
+		 {% capture grid_item_width %} large--one-quarter medium--one-half {% endcapture %}
+	{% when '5' %}
+		 {% capture grid_item_width %} large--one-fifth medium--one-half {% endcapture %}
+	{% when '6' %}
+		 {% capture grid_item_width %} large--one-sixth medium--one-half {% endcapture %}
+	{% else %}
+		 {% capture grid_item_width %} large--one-quarter medium--one-half {% endcapture %}
+{% endcase %}
+
+<div class="grid__item large--one-half medium--one-half">
+  	{% assign article = product %}
+	<article class="post">
+        <div class="posts-image">
+          {% if article.image %}
+          <a href="{{ article.url }}" title="" class="post-thumbnail">
+            <img src="{{ article.image.src | img_url: 'original' }}" alt="" class="img-responsive">
+          </a>
+          {% endif %}
+        </div>
+
+        <div class="info-absolute">
+          <div class="posts-title">
+            <h4 class="entry-title">
+              <a href="{{ article.url }}" title="{{ article.title }}">{{ article.title }}</a>
+            </h4>
+            <div class="entry-meta">
+              <span class="time">{{article.published_at | date: " %d" }}  {{article.published_at | date: "%B" }} , {{article.published_at | date: " %Y" }} / </span>
+              {% capture author %}<span>{{ article.author }}</span>{% endcapture %}
+              <span class="entry-meta-author">{{ author }}</span>
+            </div>
+          </div>
+
+          <div class="description">
+            {% if article.excerpt.size > 0 %}
+            <p class="entry-content">{{ article.excerpt | strip_html | truncatewords: 30 }} </p>
+            {% else %}
+            <p class="entry-content">{{ article.content | strip_html | truncatewords: 30 }} </p>
+            {% endif %}
+
+          </div>
+        </div>
+
+        <ul class="inline-list hidden">
+          {% include 'tags-article' %}
+        </ul>
+
+        {% unless forloop.last %} {% endunless %}
+    </article>
+</div>

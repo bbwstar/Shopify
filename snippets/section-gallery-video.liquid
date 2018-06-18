@@ -1,0 +1,68 @@
+<!-- /templates/snippets/section-image-gallery.liquid -->
+
+<div class="widget widget-gallery style2 no-margin space-top-{{ settings.margin-top-section }}">
+	<div class="wrapper">
+		<div class="grid">
+			<div class="grid__item large--one-half">
+				<div class="gallery-content">
+				<h3 class="title">{{ settings.gallery_video_gallery_title }}</h3>
+				<p class="description-gallery">{{ settings.gallery_video_gallery_description }}</p>
+				<div class="clearfix gallery-info">
+					{% for i in (1..9) %}
+						{% capture _enable %}gallery_video_gallery_image_{{ i }}_enable{% endcapture %}
+						{% capture _image %}gallery_video_gallery_image_{{ i }}.jpg{% endcapture %}
+						{% if settings[_enable] %}
+								<div class="image left">
+									<a href="{{ _image | asset_url }}" class="fancybox">
+										<img src="{{ _image | asset_url }}" alt="">
+									</a>
+								</div>
+							
+						{% endif %}
+					{% endfor %}
+				</div>
+				</div>
+			</div>
+			<div class="grid__item large--one-half">
+				<div class="content-video">
+				<div class="video-wrapper-inner">
+					{% capture _image %}gallery_video_video_image.jpg{% endcapture %}
+					<div class="video">
+						{% if settings.gallery_video_video_link != blank %}
+							<a class="fancybox-video fancybox.iframe" href="{{ settings.gallery_video_video_link }}">
+						{% endif %}
+							<img src="{{ _image | asset_url }}" alt="">
+							<i class="fa fa-play-circle" aria-hidden="true"></i>
+						{% if settings.gallery_video_video_link != blank %}
+							</a>
+						{% endif %}
+					</div>
+					<div class="video-content">
+						<h3 class="title-video">{{ settings.gallery_video_video_title }}</h3>
+						<p class="description"> {{ settings.gallery_video_video_description }}</p>
+					</div>
+				</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	
+	$(document).ready(function() {
+		$(".fancybox-video").fancybox({
+			maxWidth	: 800,
+			maxHeight	: 600,
+			fitToView	: false,
+			width		: '70%',
+			height		: '70%',
+			autoSize	: false,
+			closeClick	: false,
+			openEffect	: 'none',
+			closeEffect	: 'none',
+			padding     : 0,
+                margin      : 50
+		});
+	});
+</script>

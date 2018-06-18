@@ -1,0 +1,45 @@
+<!-- /templates/snippets/section-blog.liquid -->
+
+<div class="widget latest-posts  space-top-{{ settings.margin-top-section }} space-120 space-top-140">
+	<div class="p-relative">
+		
+		<div class="heading-title style1 space-25 text-center clearfix">
+			<h3 class="widget-title title-md"><span>{{settings.blog_title}}</span></h3>
+		</div>
+
+		<div class="blog-carousel owl-carousel" data-items="{{ settings.blog_number_column }}" data-carousel="owl" data-pagination="true" data-nav="true">
+			{% for article in blogs.news.articles limit: settings.blog_number_item %}
+
+				<div class="latest-posts-body">
+					<div class="p-relative">
+						{% if article.image %}
+						<div class="posts-image">
+							<a href="{{ article.url }}" title="">
+								<img src="{{ article.image.src | img_url: 'original' }}" alt="" class="img-responsive">
+							</a>
+							<a class="category" href="{{ blogs.news.url }}"><span>{{ blogs.news.title }}</span></a>
+						</div>
+						{% endif %}
+						<div class="info-absolute">
+							<div class="posts-title">
+								<h4 class="entry-title">
+									<a href="{{ article.url }}" title="{{ article.title }}">{{ article.title }}</a>
+								</h4>
+								<div class="entry-meta">
+								<span class="time">{{article.published_at | date: " %d" }}  {{article.published_at | date: "%B" }} , {{article.published_at | date: " %Y" }} / </span>
+								{% capture author %}<span>{{ article.author }}</span>{% endcapture %}
+	            				<span class="entry-meta-author">{{ author }}</span>
+								</div>
+							</div>
+							<div class="description">
+								{{ article.content | strip_html | truncatewords: 25 }}
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>

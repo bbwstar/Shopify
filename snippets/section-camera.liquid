@@ -1,0 +1,38 @@
+<!-- /templates/snippets/section-introduction.liquid -->
+
+{% capture _bg %}camera_bg.jpg{% endcapture %}
+
+<div class="section-camera no-margin"{% if settings.camera_bg_enable %} style="background: url({{ _bg | asset_url }}) no-repeat;" {% endif %}>
+  <div class="wrapper">
+  <div class="grid">
+    <div class="grid__item large--one-half">
+      {% capture _image %}camera_image.png{% endcapture %}
+      {% if settings.camera_image_enable %}
+        <div class="img-up">
+        <img src="{{ _image | asset_url }}" alt="">
+        </div>
+      {% endif %}
+    </div>
+    <div class="grid__item large--one-half second-info">
+      <h3 class="title"><span>{{ settings.camera_title }}</span></h3>
+      {% if settings.camera_description %}
+        <p class="description">{{ settings.camera_description }}</p>
+      {% endif %}
+
+      {% capture _image1 %}camera_image_1.png{% endcapture %}
+      {% capture _image2 %}camera_image_2.png{% endcapture %}
+
+      {% if settings.camera_image_1_enable %}
+        <div class="image left">
+          {{ _image1 | asset_url | img_tag }}
+        </div>
+      {% endif %}
+      {% if settings.camera_image_2_enable %}
+        <div class="image left">
+          {{ _image2 | asset_url | img_tag }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  </div>
+</div>

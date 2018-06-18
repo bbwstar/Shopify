@@ -1,0 +1,10 @@
+<!-- /templates/snippets/section-features.liquid -->
+
+<div class="section-features medium-down--hide no-margin"{% if settings.camera_bg_enable %} style="background: url({{ _bg | asset_url }}) no-repeat;" {% endif %}>
+
+  {% capture _image %}features_image.jpg{% endcapture %}
+  {% if settings.features_image_enable %}
+    <img src="{{ _image | asset_url }}" alt="">
+  {% endif %}
+  
+</div>

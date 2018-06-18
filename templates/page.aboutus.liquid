@@ -1,0 +1,15 @@
+<!-- /templates/page.aboutus.liquid -->
+
+{%for i in (1..6)%}
+{% capture aboutus_section %}aboutus_section_{{i}}{% endcapture %}
+{% capture full %}aboutus_section_full_{{ i }}{% endcapture %}
+
+  {% if settings[aboutus_section] != blank %}
+    <section>
+      <div class="{% if settings[full] %}full_screen{% else %}wrapper{% endif %}">
+        {% include settings[aboutus_section] %}
+      </div>
+    </section>
+  {% endif %}
+{%endfor%}
+

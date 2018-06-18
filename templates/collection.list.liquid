@@ -1,0 +1,74 @@
+<!-- /templates/collection.list.liquid -->
+{% comment %}
+
+  By using a variation of the 'view all' parameter technique, you can create
+  a custom layout for any template by adding ?view=xxxx
+
+  In this example, you can have a list view of your collection page by going to
+  /collections/all?view=list
+
+  For more information on collection tags:
+    - http://docs.shopify.com/themes/liquid-variables/collection
+
+  For more information on the ?view parameter:
+    - http://docs.shopify.com/support/configuration/store-customization/can-i-show-more-than-50-products-on-my-homepage-can-i-add-a-view-all-function-to-my-collection-pages#add-view-all
+
+{% endcomment %}
+
+{% paginate collection.products by settings.nb_per_page %}
+
+
+{% comment %}
+  Use .grid--rev so that the collection tags appear below the products on mobile
+{% endcomment %}
+<div class="grid--rev">
+  <div class="grid__item {% if settings.collection_show_sidebar %}large--three-quarters{% endif %}">
+
+      <header class="collection__info clearfix hidden">
+        <h1 class="section-header__title">{{ collection.title }}</h1>
+        <div class="collection__image">
+          <img src="{{ collection.image | img_url: 'master' }}" class="img-responsive" alt="{{collection.image}}">
+        </div>
+        <div class="rte rte--header ">
+          {{ collection.description }}
+        </div>
+      </header>
+      <div class="collection__sort section-header">
+        <div class="section-header__right clearfix">
+          {% include 'collection-sorting' %}
+        </div>
+      </div>
+
+    <div class="style-list clearfix">
+
+      <!-- begin product list output -->
+      {% for product in collection.products %}
+
+        {% include 'product-list' %}
+
+      {% else %}
+
+        <div class="grid__item">
+          <p>{{ 'collections.general.no_matches' | t }}</p>
+        </div>
+
+      {% endfor %}
+      <!-- //product list output -->
+
+    </div>
+
+    {% if paginate.pages > 1 %}
+      <div class="pagination">
+        {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+      </div>
+    {% endif %}
+
+  </div>
+  {% if settings.collection_show_sidebar %}
+    <div class="sidebar grid__item large--one-quarter collection-sidebar">
+      {% include 'collection-sidebar' %}
+    </div>
+  {% endif %}
+</div>
+
+{% endpaginate %}

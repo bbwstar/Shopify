@@ -1,0 +1,47 @@
+<!-- /snippets/collection-sidebar.liquid -->
+
+{% if settings.widget_enable_1 %}
+<div class="widget">
+  <h3 class="widget-title">{{ settings.widget_title_1 }}</h3>
+  {% assign collection_1 = collections[settings.widget_collection_1] %}
+  <div class="list">
+  {% for product in collection_1.products limit:5 %}
+    {% include 'product-list1' %}
+  {% endfor %}
+  </div>
+</div> <!-- end widget 1 -->
+{% endif %}
+
+{% if settings.widget_text_enable %}
+<div class="widget-text widget">
+    <h3 class="widget-title">{{ settings.widget_text_title }}</h3>
+    <p>{{ settings.widget_text_content }}</p>
+</div><!-- end advertising -->
+{% endif %}
+
+{% if settings.ads_enable %}
+<div class="widget-ads widget">
+    <a href="{{settings.ads_block_url}}">{{ 'ads_block.jpg'| asset_url | img_tag}}</a>
+</div><!-- end advertising -->
+{% endif %}
+
+{% if settings.tags_enable and settings.tags_menu %}
+
+<div class="widget-tags widget clearfix">
+  <h4 class="widget-title">{{ 'collections.sidebar.tags' | t }}</h4>
+  <ul class="widget__content tags">
+
+      {% assign footerlinks_name = settings.tags_menu %}
+      {% for link in linklists[footerlinks_name].links %}
+      <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+      {% endfor %}
+    
+  </ul>
+
+</div> <!-- end tags -->
+{% endif %}
+
+
+
+
+

@@ -1,0 +1,19 @@
+<!-- /snippets/product-grid-item.liquid -->
+{% case settings.nb_column %}
+	{% when '2' %}
+		 {% capture grid_item_width %} large--one-half medium--one-half {% endcapture %}
+	{% when '3' %}
+		 {% capture grid_item_width %} large--one-third medium--one-half {% endcapture %}
+	{% when '4' %}
+		 {% capture grid_item_width %} large--one-quarter medium--one-half {% endcapture %}
+	{% when '5' %}
+		 {% capture grid_item_width %} large--one-fifth medium--one-half {% endcapture %}
+	{% when '6' %}
+		 {% capture grid_item_width %} large--one-sixth medium--one-half {% endcapture %}
+	{% else %}
+		 {% capture grid_item_width %} large--one-quarter medium--one-quarter {% endcapture %}
+{% endcase %}
+
+<div class="grid__item {{ grid_item_width }}">
+	{% include 'product-item' %}
+</div>

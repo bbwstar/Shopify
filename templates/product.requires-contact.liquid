@@ -1,0 +1,268 @@
+{%- include 'bold-ro' -%}
+{%- include 'bold-product' with product, hide_action: 'break', output: 'none' -%}
+<!-- /templates/product.liquid -->
+{% comment %}
+
+  Rich snippets (itemscope, itemtype, etc.) for products are a theme requirement,
+  and allow search engines to easily understand what the content is.
+
+  For more information on these Scheme.org tags, visit:
+    - http://schema.org/docs/gs.html
+
+{% endcomment %}
+
+<div itemscope itemtype="http://schema.org/Product">
+
+  <meta itemprop="url" content="{{ shop.url }}{{ product.url }}">
+  <meta itemprop="image" content="{{ product.featured_image.src | img_url: 'grande' }}">
+
+  {% comment %}
+    Get first variant, or deep linked one
+  {% endcomment %}
+  {% assign current_variant = product.selected_or_first_available_variant %}
+
+  
+
+  <div class=" product-single">
+    
+      <div class="grid">
+        <div class="grid__item large--five-twelfths text-center">
+          
+          <div class="product-single__photos" id="ProductPhoto">
+            {% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+            <a href="{{ featured_image | img_url: 'master' }}" class="cloud-zoom" title="{{product.title}}" data-rel="useWrapper: false, showTitle: false, zoomWidth:'auto', zoomHeight:'auto', adjustY:0, adjustX:10">
+              <img src="{{ featured_image | img_url: 'grande' }}" alt="{{ featured_image.alt | escape }}" id="ProductPhotoImg">
+            </a>
+          </div>
+          {% if product.images.size > 1 %}
+            <div class="product-single__thumbnails grid-uniform" id="ProductThumbs">
+              <div class="owl-carousel no-margin" data-items="4" data-carousel="owl" data-pagination="false" data-nav="true">
+                {% for image in product.images %}
+                  <div class="product__thumbnails">
+                    <a href="{{ image.src | img_url: 'master' }}" class="product-single__thumbnail thumb-link" data-rel="{{ image.src | img_url: 'grande' }}">
+                      <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+                    </a>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="grid__item infor large--seven-twelfths">
+
+          <h1 class="title-products" itemprop="name">{{ product.title }}</h1>
+
+          <div class="product-stars">
+            <span class=" shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+          </div>
+
+          <div class="product-price">
+            <span id="ProductPrice" class="price" itemprop="price">
+              {{ current_variant.price | money }}
+            </span>
+
+            
+          </div>
+
+
+          <div itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <meta itemprop="priceCurrency" content="{{ shop.currency }}">
+
+            <link itemprop="availability" href="http://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}">
+
+            {% comment %}
+              ID addToCartForm is a selector for the ajax cart plugin
+            {% endcomment %}
+            <form action="/cart/add" method="post" enctype="multipart/form-data" id="AddToCartForm" data-productid="{{product.id}}" class="form-vertical add-to-cart">
+              
+             
+
+              <div class="product-description rte" itemprop="description">
+                {{ product.description | strip_html | truncatewords: 60}}
+              </div>
+
+              {% comment %}
+                Add product variants as a dropdown.
+                  - By default, each variant (or combination of variants) will display as its own <option>
+                  - To separate these into multiple steps, which we suggest, use option_selection.js (see below)
+
+                You can leverage jQuery to add a callback on page load and each time the select element changes:
+                  - Include option_selection.js (as seen at the bottom of this file)
+                  - This allows you to use JavaScript anytime the variant dropdown changes
+                  - This also separates out your variant options (ie. size, color, etc.) to separate select elements
+
+                For more information on products with multiple options, visit:
+                  - http://docs.shopify.com/support/your-website/themes/can-i-make-my-theme-use-products-with-multiple-options#update-product-liquid
+              {% endcomment %}
+              <div class="apusVariants">
+                <select name="id" data-productid="{{product.id}}" id="productSelect" class="product-single__variants">
+                  {% for variant in product.variants %}
+                    {% if variant.available %}
+
+                      {% comment %}
+                        Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+                      {% endcomment %}
+                      <option {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %} data-sku="{{ variant.sku }}" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+
+                    {% else %}
+                      <option disabled="disabled">
+                        {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+                      </option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+
+                {% if settings.product_detail_swatch_enable %}
+                    {% for option in product.options %}
+                  		{% if option != "Title" %}
+                        {% include 'swatch' with option %}
+                  		{% endif %}
+                    {% endfor %}
+                {% endif %}
+              </div>
+              {% if product.compare_at_price_max > product.price %}
+                <span class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+                <p id="ComparePrice" class="hidden">
+                  {{ 'products.product.compare_at' | t }} {{ current_variant.compare_at_price | money }}
+                </p>
+              {% endif %}
+  				    
+              
+
+               
+                
+				<div class="ro_widget"></div>
+                
+                <button type="submit" name="add" id="AddToCart" class="btn btn-primary product-add-cart">
+                  {{ 'products.product.add_to_cart' | t }}
+                </button>
+<!-- bold-ro-liquid --><div class="bold_add_to_orders" style="display: inline-block;"></div><!-- bold-ro-liquid -->
+                {% include 'wishlist-product' %}
+              </div>
+              <div class="clearfix"></div>
+              
+            </form>
+
+            <div class="product-socials">
+                {% include "product-socials" %}
+            </div>
+
+            
+
+            <div class="product-sku-container hidden ">
+              <label class="product-sku">{{ 'products.product.product_sku' | t }}</label>
+              <span class="variant-sku"></span>
+            </div>
+            {% comment %}
+              product custom payment logo, social share
+            {% endcomment %}
+            <div class="clearfix"></div>
+            
+
+            {% comment %}
+              If the user is on a collection product page (ie with /collections/collection-handle/products/product-handle)
+              in the URL, we can show next/previous links to other products in the collection.
+            {% endcomment %}
+            {% if collection %}
+              {% if collection.previous_product or collection.next_product %}
+                <p>
+                  {% if collection.previous_product %}
+                    <span class="left">
+                      {{ 'products.general.previous_product_html' | t | link_to: collection.previous_product }}
+                    </span>
+                  {% endif %}
+                  {% if collection.next_product %}
+                    <span class="right">
+                      {{ 'products.general.next_product_html' | t | link_to: collection.next_product }}
+                    </span>
+                  {% endif %}
+                </p>
+              {% endif %}
+            {% endif %}
+
+          </div>
+        </div>
+      </div>
+
+     
+
+
+</div>
+
+{% comment %}
+  To take advantage of a callback on the select dropdown, add option_selection.js
+  and customize the JS in timber.productPage as needed.
+
+  Currently, timber.productPage does the following:
+    - Hides your <select> tag from above
+    - Breaks out the product variants into separate product options, if more than one exists
+    - Generates a <select> tag for each product option
+    - Enables/disables elements based on variant availability
+
+  Callback notes:
+    - Keep the callback available to the global scope (window.selectCallback) so that advanced
+      addons can override it.
+      * E.g. multiple currencies http://docs.shopify.com/manual/configuration/store-customization/currencies-and-translations/currencies/how-to-toggle-between-two-currencies
+{% endcomment %}
+
+<script>
+  
+  var selectCallback = function(variant, selector) {
+    if (variant) {
+      if (variant.available) {
+        // Selected a valid variant that is available.
+        $('#AddToCart').removeClass('disabled').removeAttr('disabled').val('Add to Cart').fadeTo(200,1);
+      } else {
+        // Variant is sold out.
+        $('#AddToCart').val('Sold Out').addClass('disabled').attr('disabled', 'disabled').fadeTo(200,0.5);        
+      }
+      // Whether the variant is in stock or not, we can update the price and compare at price.
+      if ( variant.compare_at_price > variant.price ) {
+        $('#ProductPrice').html('<span class="product-price on-sale">'+ Shopify.formatMoney(variant.price, "") +'</span>'+'&nbsp;<s class="product-compare-price">'+Shopify.formatMoney(variant.compare_at_price, "")+ '</s>');
+      } else {
+        $('#ProductPrice').html('<span class="product-price">'+ Shopify.formatMoney(variant.price, "") + '</span>' );
+      }        
+    } else {
+      // variant doesn't exist.
+      $('#AddToCart').val('Unavailable').addClass('disabled').attr('disabled', 'disabled').fadeTo(200,0.5);
+    }
+
+    if (variant) {
+      $('.variant-sku').text(variant.sku);
+      $('.product-sku-container').show();
+    }
+    else {
+      $('.variant-sku').empty();
+      $('.product-sku-container').hide();
+    }
+  };
+
+  jQuery(function($) {
+    new Shopify.OptionSelectors('productSelect', {
+      product: {%- include 'bold-product', output: 'json' -%},
+      onVariantSelected: selectCallback,
+      enableHistoryState: true
+    });
+
+    // Add label if only one product option and it isn't 'Title'. Could be 'Size'.
+    {% if product.options.size == 1 and product.options.first != 'Title' %}
+      $('.selector-wrapper:eq(0)').prepend('<label for="productSelect-option-0">{{ product.options.first | escape }}</label>');
+      //$('.selector-wrapper:eq(0)').append('<div class="clearfix"></div>');
+    {% endif %}
+
+    // Hide selectors if we only have 1 variant and its title contains 'Default'.
+    {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+      $('.selector-wrapper').hide();
+    {% endif %}
+    $('.selector-wrapper').append('<div class="clearfix"></div>');
+  });
+</script>
+  <script>
+    $(document).on('change', '.single-option-selector', function(){
+      if (BOLD && BOLD.recurring_orders && BOLD.recurring_orders.app && BOLD.recurring_orders.app.ee &&
+         typeof BOLD.recurring_orders.app.ee.emit === 'function'){
+        BOLD.recurring_orders.app.ee.emit('variant_changed');
+      }
+    });
+</script>

@@ -1,0 +1,56 @@
+<!-- /templates/snippets/section-ourteam.liquid -->
+
+{% capture _image %}ourteam_icon.png{% endcapture %}
+<div class="widget ourteam medium-down--hide space-top-{{ settings.margin-top-section }} space-150" {% if settings.ourteam_icon_enable %} style="background: url({{ _image | asset_url }}) no-repeat top center; "{% endif %}>
+  <div class="heading-title text-center">
+    <h3 class="widget-title title-md"><span>{{ settings.our_team_title }}</span></h3>
+  </div>
+  <div class="wrapper-banner">
+      <div class="grid">
+          {% for i in (1..3) %}
+          {% capture _image %}our_team_{{ i }}_image.jpg{% endcapture %}
+            {% capture _name %}our_team_1{{ i }}_name{% endcapture %}
+            {% capture _job %}our_team_{{ i }}_job{% endcapture %}
+            {% capture _facebook %}our_team_{{ i }}_facebook{% endcapture %}
+            {% capture _twitter %}our_team_{{ i }}_twitter{% endcapture %}
+            {% capture _linkin %}our_team_{{ i }}_linkin{% endcapture %}
+            {% capture _google_plus %}our_team_{{ i }}_google_plus{% endcapture %}
+            {% capture _name %}our_team_{{ i }}_name{% endcapture %}
+          
+                <div class="grid__item medium--one-third large--one-third">
+                  <div class="ourteam-inner">
+                    <div class="avarta">
+                      <img src="{{ _image | asset_url }}" alt="">
+                      <ul class="social-link lighten">
+                          {% if settings[_facebook] != blank %}
+                              <li><a href="{{ settings[_facebook] }}" title=""><i class="fa fa-facebook"></i></a></li>
+                          {% endif %}
+                          {% if settings[_twitter] != blank %}
+                              <li><a href="{{ settings[_twitter] }}" title=""><i class="fa fa-twitter"></i></a></li>
+                          {% endif %}
+                          {% if settings[_google_plus] != blank %}
+                              <li><a href="{{ settings[_google_plus] }}" title=""><i class="fa fa-google-plus"></i></a></li>
+                          {% endif %}
+                          {% if settings[_linkin] != blank %}
+                              <li><a href="{{ settings[_linkin] }}" title=""><i class="fa fa-linkedin"></i></a></li>
+                          {% endif %}
+                      </ul>
+                    </div>
+                    <div class="info">
+                    {% if settings[_name] != blank %}
+                      <h3 class="ourteam-heading">
+                          <span>{{ settings[_name] }}</span>
+                      </h3>
+                    {% endif %}
+                    {% if settings[_job] != blank %}
+                      <p class="ourteam-job">
+                          {{ settings[_job] }}
+                      </p>
+                    {% endif %}
+                    </div>
+                 </div>   
+                </div>
+          {% endfor %}
+      </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+{% if settings.widget_catalog_size_enable != blank %}
+
+<div class="widget  filter-custom filter-tag">
+  {% assign tags = settings.widget_catalog_size_list | split: ',' %} 
+  <h3 class="filter-title widget-title">
+    {{ settings.widget_catalog_size_title }}<a href="javascript:void(0)" class="clear" style="display:none" >clear</a>
+  </h3>
+  <div class="filter-content">
+    
+   <ul class="box-grid-stype sizes">
+      {% for t in tags %}
+        {% assign tag = t | strip %}
+        {% assign tag_value = tag | handleize %}      
+        {% if collection.tags contains tag or current_tags contains tag_value %}
+          <li class="li-size">
+            <input type="checkbox" value="{{ tag_value | split: '|' | first }}" checked/>
+            <label>{{ tag | split: '|' | first }}</label>
+          </li>
+        {% else %}
+          {% if collection.tags contains tag or collection.tags contains tag_value %} 
+            <li class="li-size">
+              <input type="checkbox" value="{{ tag_value | split: '|' | first }}"/>       
+              <a href="javascript:void(0)" title="{{tag}}">{{tag}}</a>
+            </li>
+          {% endif %}
+        {% endif %}
+      
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+
+{% if settings.widget_catalog_price_enable %}
+
+<div class="filter-block widget filter-custom filter-tag">
+  {% assign tags = settings.widget_catalog_price_list | split: ',' %} 
+  <h3 class="filter-title widget-title">
+    {{ settings.widget_catalog_price_title }}<a href="javascript:void(0)" class="clear" style="display:none" >clear</a>
+  </h3>
+  <div class="filter-content">
+    <ul class="square">
+      {% for t in tags %}
+        {% assign tag = t | strip %}
+        {% assign tag_value = tag | handleize %}      
+        {% if current_tags contains tag %}
+          <li class="li-price active">
+            <input type="checkbox" value="{{ tag_value | split: '|' | first }}" checked/>
+            <label>{{ tag | split: '|' | first }}</label>
+          </li>
+        {% else %}
+          {% if collection.tags contains tag %} 
+            <li class="li-price">
+              <input type="checkbox" value="{{ tag_value | split: '|' | first }}"/>       
+              <a href="javascript:void(0)" title="{{tag}}">{{tag}}</a>
+            </li>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}

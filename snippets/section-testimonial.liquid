@@ -1,0 +1,35 @@
+<!-- /templates/snippets/section-testimonial.liquid -->
+
+<div class="testimonials widget space-top-{{ settings.margin-top-section }} space-150" >
+	<div class="space-25 text-center clearfix">
+	<h3 class="widget-title title-md">{{ settings.testimonial_title }}</h3>
+	</div>
+	<div class="grid">
+		{% for i in (1..6) %}
+			{% capture enable %}testimonial_{{ i }}{% endcapture %}
+			{% capture des %}testimonial_des_{{ i }}{% endcapture %}
+			{% capture name %}testimonial_name_{{ i }}{% endcapture %}
+			{% capture job %}testimonial_job_{{ i }}{% endcapture %}
+			{% capture _img %}testimonial_img_{{ i }}.jpg{% endcapture %}
+
+			{% if settings[enable] %}
+				<div class="grid__item large--one-third">
+					<div class="testimonials-body text-center">
+						<div class="testimonials-profile">
+							{% if _img != blank %}
+								<div class="avatar">
+								<img src="{{_img| asset_url}}" alt="{{_img}}">
+								</div>
+							{% endif %}
+							<div class="text-center">
+								<h3 class="name">{{settings[name]}}</h3>
+								<span class="job">{{settings[job]}}</span>
+							</div>
+						</div>
+						<p class="description">{{settings[des]}}</p>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+</div>

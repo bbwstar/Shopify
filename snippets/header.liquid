@@ -1,0 +1,7 @@
+{% if settings.header_type == 'header2' %}
+  	{% include 'header2' %}
+{% elsif settings.header_type == 'header3' %}
+	{% include 'header3' %}
+{% else %}
+  	{% include 'header1' %}
+{% endif %}

@@ -1,0 +1,20 @@
+<!-- snippets/onboarding-empty-collection.liquid -->
+
+      {% assign index = 1 %}
+      {% for i in (1..8) %}
+        {% case i %}
+          {% when 7 %}
+            {% assign index = 1 %}
+          {% when 8 %}
+            {% assign index = 2 %}
+        {% endcase %}
+        <div class="grid__item{% if template != 'index' %} one-half large--one-quarter{% endif %}">
+          <a href="/admin/products" class="grid__image">
+            {% capture imageUrl %}//cdn.shopify.com/s/images/themes/product-{{ index }}.png{% endcapture %}
+            {{ imageUrl | img_tag }}
+          </a>
+          <p class="h6"><a href="/admin/products">{{ 'homepage.onboarding.product_title' | t }}</a></p>
+          <p>$19.99</p>
+        </div>
+        {% assign index = index | plus: 1 %}
+      {% endfor %}

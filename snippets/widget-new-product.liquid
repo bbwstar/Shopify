@@ -1,0 +1,6 @@
+<div class="sidebar__widget">
+	{% assign collection_1 = collections[settings.widget_collection_1] %}
+	{% for product in collection_1.products %}
+		{% include 'product-grid-item' %}
+	{% endfor %}
+</div>

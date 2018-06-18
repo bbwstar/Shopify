@@ -1,0 +1,100 @@
+<!-- /snippets/footer.liquid -->
+
+<div class="site-footer__main">
+	<div class="wrapper">
+		<div class="grid">
+			{% assign footer_menu_1 = settings.footer_menu_1%}
+			{% assign footer_menu_2 = settings.footer_menu_2%}
+			{% assign footer_menu_3 = settings.footer_menu_3%}
+
+			<div class="grid__item large--three-twelfths ">
+				<div class="widget widget-address">
+					<h3 class="widget-title">{{ settings.footer_block_1_title }}</h3>
+					{{ settings.footer_block_1_address }}
+					{{ settings.footer_block_1_emails }}
+					{{ settings.footer_block_1_phone }}
+					
+				</div>
+			</div>
+			<div class="grid__item large--three-twelfths">
+			<div class="widget">
+				<h4 class="widget-title">{{settings.footer_block_2_title}}</h4>
+				<ul class="links">
+					{% assign footerlinks_name = settings.footer_block_2 %}
+					{% for link in linklists[footerlinks_name].links %}
+					<li><a href="{{ link.url }}">{{ link.title }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			</div>
+			<div class="grid__item large--two-twelfths">
+			<div class="widget">
+				<h4 class="widget-title">{{settings.footer_block_3_title}}</h4>
+				<ul class="links">
+					{% assign footerlinks_name = settings.footer_block_3 %}
+					{% for link in linklists[footerlinks_name].links %}
+					<li><a href="{{ link.url }}">{{ link.title }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+			</div>
+			<div class="grid__item large--four-twelfths">
+				<div class="widget">
+					<h4 class="widget-title">{{settings.footer_block_4_title}}</h4>
+					
+					<!-- form contact -->
+					{% form 'contact' %}
+
+				        {% comment %}
+				          Successful message
+				        {% endcomment %}
+				        {% if form.posted_successfully? %}
+				          <p class="note form-success">
+				            {{ 'contact.form.post_success' | t }}
+				          </p>
+				        {% endif %}
+						
+				      	<div class="clearfix">
+				            {{ form.errors | default_errors }}
+
+			                <div>
+			                  {% assign name_attr = 'contact.form.name' | t | handle %}
+			                  <input type="text" id="ContactFormName" class="input-full" name="contact[{{ name_attr }}]"  value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder="{{ 'contact.form.name' | t }}">
+			                </div>
+			                <div>
+			                  <input type="email" id="ContactFormEmail" class="input-full" name="contact[email]" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"  placeholder="{{ 'contact.form.email' | t }}">
+			                </div>
+			                <div>
+			                  <textarea rows="3" id="ContactFormMessage" class="input-full" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+			                </div>
+			                <div>
+			                  <button type="submit" class="btn btn-default btn-outline">{{ 'contact.form.send' | t }}</button>
+			                </div>
+		              	</div>
+		            {% endform %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="site-footer__copyright">
+	<div class="wrapper">
+		<div class="grid">
+          <!--
+			<div class="grid__item copyright large--one-half">
+				{% if settings.copyright %}
+					{{ settings.copyright }}
+				{% endif %}
+			</div>
+-->
+			<div class="grid__item large--one-half text-right">
+				<ul class="links">
+					{% assign copyrightlinks_name = settings.copyright_menu %}
+					{% for link in linklists[copyrightlinks_name].links %}
+					<li><a href="{{ link.url }}">{{ link.title }}</a></li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>

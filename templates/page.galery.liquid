@@ -1,0 +1,24 @@
+<!-- /templates/page.gallery.liquid -->
+
+<div class="clearfix widget widget-gallery">
+	<div class="heading-title  text-center space-25">
+	 	<h3 class="widget-title title-md">{{ settings.gallery_page_image_title }}</h3>
+	</div>
+	<div class="grid grid-style-2">
+		
+		{% for i in (1..12) %}
+			{% capture _enable %}gallery_page_image_{{ i }}_enable{% endcapture %}
+			{% capture _image %}gallery_page_image_{{ i }}.jpg{% endcapture %}
+			{% if settings[_enable] %}
+				<div class="grid__item large--one-third">
+					<div class="image">
+						<a href="{{ _image | asset_url }}" class="fancybox">
+							<img src="{{ _image | asset_url }}" alt="">
+						</a>
+					</div>
+				</div>
+			{% endif %}
+		{% endfor %}
+		
+	</div>
+</div>

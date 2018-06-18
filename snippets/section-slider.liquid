@@ -1,0 +1,51 @@
+
+
+
+<!-- /templates/snippets/section-slider.liquid -->
+
+<div class="section-slider no-margin space-top-{{ settings.margin-top-section }}">
+
+  <div class="slider-owl owl-carousel" data-items="1" data-carousel="owl" data-pagination="false" data-nav="false" data-autoplay="{% if settings.slide_carousel_autoplay %}true{% else %}false{% endif %}" data-autoplaytimeout="{{ settings.slide_carousel_interval }}">
+    {% for i in (1..5) %}
+      {% capture _enable %}slide_carousel_{{ i }}_enable{% endcapture %}
+      {% capture _image %}slide_carousel_{{ i }}_image.png{% endcapture %}
+      {% capture _header %}slide_carousel_{{ i }}_header{% endcapture %}
+      
+      {% capture _button1 %}slide_carousel_{{ i }}_button_1{% endcapture %}
+      {% capture _link1 %}slide_carousel_{{ i }}_link_1{% endcapture %}
+      {% capture _button2 %}slide_carousel_{{ i }}_button_2{% endcapture %}
+      {% capture _link2 %}slide_carousel_{{ i }}_link_2{% endcapture %}
+      {% capture _style %}slide_carousel_{{ i }}_style{% endcapture %}
+
+      {% assign enable = settings[_enable] %}
+
+      {% if enable %}
+
+      <div class="slider-content">
+        <div class="slider-home slide-fullwidth">
+          <img src="{{ _image | asset_url }}" alt="">
+          <div class="wrapper-content {{ settings[_style] }}">
+            <div class="wrapper">
+              <div class="slider-caption caption-center">
+
+                {% if settings[_header] != blank %}
+                  <h1>{{ settings[_header] }}</h1>
+                {% endif %}
+
+                {% if settings[_button1] != blank %}
+                  <a class="btn btn-outline btn-default" href="{{ settings[_link1] }}">{{ settings[_button1] }}</a>
+                {% endif %}
+                {% if settings[_button2] != blank %}
+                  <a class="btn btn-outline btn-default" href="{{ settings[_link2] }}">{{ settings[_button2] }}</a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      {% endif %}
+
+    {% endfor %}
+
+<script src="//www.codeblackbelt.com/js/modules/video-background/main.min.js?shop=upsuite.myshopify.com"></script>

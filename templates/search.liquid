@@ -1,0 +1,135 @@
+<!-- /templates/search.liquid -->
+{% comment %}
+
+  To return only products or pages in results:
+    - http://docs.shopify.com/manual/configuration/store-customization/return-only-product-in-storefront-search-results
+    - Or manually add type=product or type=page to the search URL as a parameter
+
+{% endcomment %}
+
+{% comment %}
+  Set grid_results to true and set search results as a grid instead of a list.
+  This works well when your search is only for products.
+{% endcomment %}
+{% assign grid_results = true %}
+
+{% comment %}
+  Check to enforce respond.js
+{% endcomment %}
+{% assign respond_js_secret_key = shop.domain | md5 %}
+{% unless search.terms == respond_js_secret_key %}
+
+{% comment %}
+  Avoid accessing search.results before the opening paginate tag.
+  If you do, the pagination of results will be broken.
+{% endcomment %}
+{% paginate search.results by 10 %}
+
+  <div>
+
+      {% if search.performed %}
+        {% if search.results_count == 0 %}
+          <h1 class="text-center">{{ 'general.search.no_results_html' | t: terms: search.terms }}</h1>
+        {% else %}
+          <h1 class="text-center">{{ 'general.search.results_for_html' | t: terms: search.terms }}</h1>
+        {% endif %}
+      {% else %}
+        <h1 class="text-center">{{ 'general.search.title' | t }}</h1>
+      {% endif %}
+
+
+      {% if search.performed %}
+
+        <hr class="hr--clear">
+
+        <div class="grid-uniform">
+          {% for product in search.results %}
+
+            {% if grid_results == false %}
+              <!-- begin list search results-->
+              {% assign on_sale = false %}
+              {% if product.compare_at_price > product.price %}
+                {% assign on_sale = true %}
+              {% endif %}
+
+              {% assign sold_out = true %}
+              {% if product.available %}
+                {% assign sold_out = false %}
+              {% endif %}
+
+               <div class="grid__item">
+                <div class="grid large--display-table">
+                  <div class="grid__item large--one-fifth large--display-table-cell medium--one-third">
+                    <a href="{{ product.url | within: collection }}">
+                      <img src="{{ product.featured_image.src | img_url: 'medium' }}" alt="{{ product.featured_image.alt | escape }}" class="grid__image">
+                    </a>
+                  </div>
+                  <div class="grid__item large--four-fifths large--display-table-cell medium--two-thirds">
+                    <div class="grid">
+                      <div class="grid__item large--three-quarters medium--two-thirds">
+                        <p class="h6">{{ product.title }}</p>
+                        <div class="rte">
+                          <p>{{ product.content | strip_html | truncatewords: 30 }}</p>
+                        </div>
+                      </div>
+                      <div class="grid__item large--one-quarter medium--one-third">
+                        <div class="product-price">
+                        {% if on_sale %}
+                          {% if product.price_varies %}
+                            {% assign sale_price = product.price | money %}
+                            {{ 'products.product.on_sale_from_html' | t: price: sale_price }}
+                          {% else %}
+                            <strong>{{ 'products.product.on_sale' | t }}</strong>
+                            {{ product.price | money }}
+                          {% endif %}
+                        {% else %}
+                          {% if product.price_varies %}
+                            {% assign price = product.price | money %}
+                            {{ 'products.general.from_text_html' | t: price: price }}
+                          {% else %}
+                            {{ product.price | money }}
+                          {% endif %}
+                        {% endif %}
+                        {% if sold_out %}
+                          <br><strong>{{ 'products.product.sold_out' | t }}</strong>
+                        {% endif %}
+                        {% if on_sale %}
+                          <br><span class="visually-hidden">{{ 'products.general.regular_price' | t }}</span><s>{{ product.compare_at_price | money }}</s>
+                        {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- //list search results-->
+            {% else %}
+              <!-- begin grid search results-->
+          		{% if product.object_type == 'article' %}
+          			{% include 'blog-grid-item' %}
+          		{% else %}
+          			
+          			{% include 'product-grid-item' %}
+          		{% endif %}
+              <!-- //grid search results-->
+            {% endif %}
+
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <div class="pagination">
+            {{ paginate | default_pagination | replace: '&laquo; Previous', '&larr;' | replace: 'Next &raquo;', '&rarr;' }}
+          </div>
+        {% endif %}
+
+      {% endif %}
+
+  </div>
+
+{% endpaginate %}
+
+{% else %}
+  {% include 'respond' %}
+  {% layout none %}
+{% endunless %}

@@ -1,0 +1,168 @@
+<div id="quick-view" class="hidden-label">
+  <div class="overlay no-background"></div>
+  <div class="content product-single">
+    <div class="grid">
+      <div class="grid__item large--one-half">
+        <div class="product-media thumbnai-left">
+          <div class="featured-image product-single-photos"></div>
+          <div class="more-views owl-carousel-play margin-top-10">
+            <div class="owl-carousel"  data-items="4" data-dots="false" data-lazyLoad="true" data-nav="false" data-autoHeight="false"></div>
+          </div>
+        </div>
+      </div> 
+
+      <div class="grid__item large--one-half">
+        <div class="product-shop product-info-main">
+          <div class="product-item">
+            <h2 class="product-name"><a>&nbsp;</a></h2>
+
+            <div class="details clearfix">
+              <form action="/cart/add" data-productid="{{product.id}}"  method="post" class="variants add-to-cart"> 
+
+                <div class="prices product-price">                  
+                  <span class="price {{product.id}}"></span>
+                  <del class="compare-price"></del> 
+                </div>
+                <p class="des description"></p>    
+                <select name='id' data-productid='{{product.id}}' style="display:none;">
+
+                </select>
+
+                <div class="product-actions">
+                  <div class="product-quantity">
+                    <label>{{ 'products.product.quantity' | t }}</label>
+                    <div class="quantity-all">
+                    <div class="js-qty">
+
+                      <button type="button" class="js-qty__adjust js-qty__adjust--minus icon-fallback-text qtyminus" data-id="" data-qty="1" data-field="quantity">
+                        <span class="icon icon-minus" aria-hidden="true"></span>
+                        <span class="fallback-text">&minus;</span>
+                      </button>
+
+                      <input type="text" class="js-qty__num qty quantity form-control" data-id="" aria-label="quantity" pattern="[0-9]*" value="1" name="quantity">
+
+                      <button type="button" class="js-qty__adjust js-qty__adjust--plus icon-fallback-text qtyplus" data-id="" data-qty="1" data-field="quantity">
+                        <span class="icon icon-plus" aria-hidden="true"></span>
+                        <span class="fallback-text">+</span>
+                      </button>
+
+                    </div>
+                      <div class="ro_widget"></div>
+                    </div>
+                    <div class="total-price product-price f-left margin-right-20">
+                      <span></span>
+                    </div>
+                  </div>
+
+                  <div class=" actions">
+                    <button type="button" class=" btn-addToCart btn btn-primary product-add-cart">{{ 'products.product.add_to_cart' | t }}</button>                  
+                  </div>
+                </div>
+
+              </form>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <a href="javascript:void(0)" class="close-window"><i class="icon icon-remove"></i></a> 
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">  
+  Shopify.doNotTriggerClickOnThumb = false; 
+
+  var selectCallbackQuickview = function(variant, selector) {
+    var productItem = jQuery('.quick-view .product-item');
+    addToCart = productItem.find('.btn-addTocart'),
+      productPrice = productItem.find('.price'),
+      comparePrice = productItem.find('.compare-price'),
+      totalPrice = productItem.find('.total-price span');           
+
+    if (variant) {
+      if (variant.available) {   
+        addToCart.removeClass('disabled').removeAttr('disabled').text('{{ 'products.product.add_to_cart' | t }}');
+                                                                      } else {
+                                                                      addToCart.val('sold_out').addClass('disabled').attr('disabled', 'disabled');
+      }
+
+      productPrice.html(Shopify.formatMoney(variant.price, '{{ shop.money_format }}'));
+                                            if ( variant.compare_at_price > variant.price ) {
+                        comparePrice
+                        .html(Shopify.formatMoney(variant.compare_at_price, '{{ shop.money_format }}'))
+                        .show();
+      productPrice.addClass('on-sale');
+    } else {
+      comparePrice.hide();
+      productPrice.removeClass('on-sale');
+    }
+
+    var form = jQuery('#' + selector.domIdPrefix).closest('form');
+    for (var i=0,length=variant.options.length; i<length; i++) {
+      var radioButton = form.find('.swatch[data-option-index="' + i + '"] :radio[value="' + variant.options[i] +'"]');
+      if (radioButton.size()) {
+        radioButton.get(0).checked = true;
+      }
+    }
+
+
+    var inventoryInfo = productItem.find('.product-inventory span');
+    if (variant.available) {
+      if (variant.inventory_management!=null) {
+        inventoryInfo.text(variant.inventory_quantity + " " + 'in_stock');
+      } else {
+        inventoryInfo.text('many_in_stock');
+      }
+    } else {
+      inventoryInfo.text('out_of_stock');
+    }
+
+    var regex = /([0-9]+[.|,][0-9]+[.|,][0-9]+)/g;
+    var unitPriceTextMatch = jQuery('.quick-view .price').text().match(regex);
+
+    if (!unitPriceTextMatch) {
+      regex = /([0-9]+[.|,][0-9]+)/g;
+      unitPriceTextMatch = jQuery('.quick-view .price').text().match(regex);     
+    }
+
+    if (unitPriceTextMatch) {
+      var unitPriceText = unitPriceTextMatch[0];     
+      var unitPrice = unitPriceText.replace(/[.|,]/g,'');
+      var quantity = parseInt(jQuery('.quick-view input[name=quantity]').val());
+      var totalPrice = unitPrice * quantity;
+
+      var totalPriceText = Shopify.formatMoney(totalPrice, window.money_format);
+      regex = /([0-9]+[.|,][0-9]+[.|,][0-9]+)/g;     
+      if (!totalPriceText.match(regex)) {
+        regex = /([0-9]+[.|,][0-9]+)/g;
+      } 
+      totalPriceText = totalPriceText.match(regex)[0];
+
+      var regInput = new RegExp(unitPriceText, "g"); 
+      var totalPriceHtml = jQuery('.quick-view .price').html().replace(regInput ,totalPriceText);
+      jQuery('.quick-view .total-price span').html(totalPriceHtml);     
+    }
+
+    if (variant && variant.featured_image) {
+      var newImage = Shopify.resizeImage(variant.featured_image.src, 'small');
+      newImage = newImage.replace(/https?:/,'');
+      jQuery('.quick-view .quickview-more-views img').each(function() {
+        var grandSize = jQuery(this).attr('src');
+        if (grandSize == newImage) {
+          jQuery(this).parent().trigger('click');              
+          return false;
+        }
+      });
+    }
+
+  } else {
+    addToCart.text('unavailable').addClass('disabled').attr('disabled', 'disabled');
+  }
+  };
+
+
+</script>

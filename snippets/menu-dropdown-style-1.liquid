@@ -1,0 +1,110 @@
+<li class="site-nav--has-dropdown{% if link.active %} site-nav--active{% endif %}" aria-haspopup="true">
+	<a href="{{ link.url }}" class="site-nav__link">
+		{{ link.title }}
+		<span class="fa fa-angle-down" aria-hidden="true"></span>
+	</a>
+	<div class="site-nav__dropdown">
+		<div class="style_1">
+			<div class="col-1">
+				<!-- {% for i in (1..6) %}
+					<div class="inner">
+						<a href="" class="link"></a>
+						<ul class="dropdown">
+						{% capture list %} list_{{i}} {% endcapture %}
+						{{list}}
+						{% assign lis = settings.[list] %}
+						{{lis}}
+							{% for l in linklists[lis].links %}
+								<li{% if l.active %} class="site-nav--active"{% endif %}>
+									<a href="{{ l.url }}" class="site-nav__link">{{ l.title | escape }}</a>
+								</li>
+							{% endfor %}
+						</ul>
+					</div>
+				{% endfor %} -->
+				<div class="inner">
+					<a href="" class="link"></a>
+					<ul class="dropdown">
+						{% assign list_1 = settings.list_1 %}
+						{% for list1 in linklists[list_1].links %}
+							<li{% if list1.active %} class="site-nav--active"{% endif %}>
+								<a href="{{ list1.url }}" class="site-nav__link">{{ list1.title | escape }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="inner">
+					<a href="" class="link"></a>
+					<ul class="dropdown">
+						{% assign list_2 = settings.list_2 %}
+						{% for list2 in linklists[list_2].links %}
+							<li{% if list2.active %} class="site-nav--active"{% endif %}>
+								<a href="{{ list2.url }}" class="site-nav__link">{{ list2.title | escape }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="inner">
+					<a href="" class="link"></a>
+					<ul class="dropdown">
+						{% assign list_3 = settings.list_3 %}
+						{% for list3 in linklists[list_3].links %}
+							<li{% if list3.active %} class="site-nav--active"{% endif %}>
+								<a href="{{ list3.url }}" class="site-nav__link">{{ list3.title | escape }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="inner">
+					<a href="" class="link"></a>
+					<ul class="dropdown">
+						{% assign list_4 = settings.list_4 %}
+						{% for list4 in linklists[list_4].links %}
+							<li{% if list4.active %} class="site-nav--active"{% endif %}>
+								<a href="{{ list4.url }}" class="site-nav__link">{{ list4.title | escape }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="inner">
+					<a href="" class="link"></a>
+					<ul class="dropdown">
+						{% assign list_1 = settings.list_1 %}
+						{% for list1 in linklists[list_1].links %}
+							<li{% if list1.active %} class="site-nav--active"{% endif %}>
+								<a href="{{ list1.url }}" class="site-nav__link">{{ list1.title | escape }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+
+				<div class="inner">
+					<a href="" class="link"></a>
+					<ul class="dropdown">
+						{% assign list_1 = settings.list_1 %}
+						{% for list1 in linklists[list_1].links %}
+							<li{% if list1.active %} class="site-nav--active"{% endif %}>
+								<a href="{{ list1.url }}" class="site-nav__link">{{ list1.title | escape }}</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div><!-- end col-1 -->
+
+			<div class="col-2">
+				<div class="product-widget">
+						{% assign collection_2 = collections[settings.widget_collection_2] %}
+						<div class="sidebar__content">
+						{% for product in collection_2.products limit:6%}
+							{% include 'widget-product' %}
+						{% endfor %}
+						</div>
+				</div>
+			</div>
+		</div> <!-- end style_1 -->
+	</div> <!-- end nav__dropdown -->
+</li>

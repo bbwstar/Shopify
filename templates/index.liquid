@@ -1,0 +1,14 @@
+<!-- /templates/index.liquid -->
+{%for i in (1..11)%}
+{%capture home_section%}home_section_{{i}}{%endcapture%}
+{% capture full %}home_section_full_{{ i }}{% endcapture %}
+
+	{% if settings[home_section] != blank %}
+	<section>
+		<div class="{%if settings[full]%}full_screen{% else %}wrapper{% endif %}">
+			{% include settings[home_section] %}
+		</div>
+	</section>
+	{% endif %}
+{%endfor%}
+

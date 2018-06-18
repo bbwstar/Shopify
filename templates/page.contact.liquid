@@ -1,0 +1,117 @@
+<!-- /templates/page.contact.liquid -->
+{% comment %}
+
+  This page template is a requirement if you are submitting your theme to the Shopify Theme Store.
+  Be sure to select page.contact as the template from the admin page to have this template take effect.
+
+  For information on adding more fields, visit:
+    - http://docs.shopify.com/support/configuration/store-customization/adding-fields-to-the-liquid-contact-form
+
+{% endcomment %}
+
+<div class="clearfix">
+  <!-- top content -->
+  <div class="wrapper">
+    <div class="widget widget-service">
+        <div class="heading-title"><h3 class="widget-title">{{settings.contact_us_title}}</h3></div>
+        <div class="content">{{ settings.contact_us_content }}</div>
+        <div class="grid">
+          <div class="grid__item large--one-quarter">
+            {{ settings.contact_us_address }}
+          </div>
+          <div class="grid__item large--one-quarter">
+            {{ settings.contact_us_emails }}
+          </div>
+          <div class="grid__item large--one-sixth">
+            {{ settings.contact_us_phone }}
+          </div>
+          <div class="grid__item large--one-third">
+            {{ settings.contact_us_hour_working }}
+          </div>
+        </div>
+    </div>
+  </div>
+  <!-- google map -->
+	{% if settings.enable_google_map %}
+      <div class="google-map space-top-{{ settings.margin-top-section }}">
+        <div id="google-map" class="gmap3" style="width:100%;height:{{ settings.google_map_height }}px;"></div>
+      </div>
+
+      <script type="text/javascript">
+          $(function(){
+
+            $("#google-map").gmap3({
+              map:{
+                      options:{
+                        "draggable": true
+                ,"mapTypeControl": true
+                ,"mapTypeId": google.maps.MapTypeId.ROADMAP
+                ,"scrollwheel": false //Alow scroll zoom in, zoom out
+                ,"panControl": true
+                ,"rotateControl": false
+                ,"scaleControl": true
+                ,"streetViewControl": true
+                ,"zoomControl": true
+                ,"center":[{{ settings.google_map_latitude }},{{ settings.google_map_longitude }}]
+                        ,"zoom": {{ settings.google_map_zoom }}
+                      }
+                  },
+
+                marker:{
+                  latLng: [{{ settings.google_map_latitude }},{{ settings.google_map_longitude }}]
+                }
+            });
+
+          });
+      </script>
+  {% endif %}
+  <!-- form -->
+  <div class="wrapper">
+    {% comment %}
+      Regular page content goes here.
+    {% endcomment %}
+    <div class="rte hidden">
+      {{ page.content }}
+    </div>
+
+    {% comment %}
+      Contact form starts here
+    {% endcomment %}
+    <div class="form-vertical">
+      {% form 'contact' %}
+        <div class="heading-title"><h3 class="widget-title">{{settings.contact_us_form_title}}</h3></div>
+        {% comment %}
+          Successful message
+        {% endcomment %}
+        {% if form.posted_successfully? %}
+          <p class="note form-success">
+            {{ 'contact.form.post_success' | t }}
+          </p>
+        {% endif %}
+		
+        {{ form.errors | default_errors }}
+
+          <div class="grid">
+            <div class="grid__item large--one-third">
+              {% assign name_attr = 'contact.form.name' | t | handle %}
+              <input type="text" id="ContactFormName" class="input-full" name="contact[{{ name_attr }}]" autocapitalize="words" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}" placeholder="{{ 'contact.form.name' | t }}">
+            </div>
+            <div class="grid__item large--one-third">
+              <input type="email" id="ContactFormEmail" class="input-full" name="contact[email]" autocorrect="off" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"  placeholder="{{ 'contact.form.email' | t }}">
+            </div>
+            <div class="grid__item large--one-third">
+              {% assign name_attr = 'contact.form.phone' | t | handle %}
+              <input type="tel" id="ContactFormPhone" class="input-full" name="contact[{{ name_attr }}]" pattern="[0-9\-]*" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.phone }}{% endif %}" placeholder="{{ 'contact.form.phone' | t }}">
+            </div>
+          </div>
+          <div class="grid">
+            <div class="grid__item">
+              <textarea rows="7" id="ContactFormMessage" class="input-full" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+              <button type="submit" class="btn btn-primary">{{ 'contact.form.send' | t }}</button>
+            </div>
+          </div>
+            
+      {% endform %}
+    </div>
+  </div>
+</div>

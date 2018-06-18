@@ -1,0 +1,26 @@
+<script
+  id="hull-js-sdk"
+  access-token="{{ customer.metafields.hull.access_token }}"
+  customer-id="{{customer.id}}"
+  org-url="https://e519b350.hullapp.io"
+  platform-id="56f2a39d50e0e5263b000387"
+  js-url="https://js.hull.io/0.9.0/hull.js.gz"
+  callback-url="/a/hull-callback"
+  raven-dsn="">
+window.HullShopify = (function() {
+  var data = { template: {{template | json }} };
+  {% if cart %}data.cart = {{ cart | json }};{% endif %}
+  {% if product %}data.product = {{ product | json }};{% endif %}
+  {% if collection %}data.collection = {{ collection | json }};{% endif %}
+  {% if customer %}data.customer = { id: {{ customer.id | json }} };{% endif %}
+  {% if search %}data.search = { results_count: {{search.results_count}}, terms: {{ search.terms | json }}}{% endif %}
+  return data;
+})();
+  
+  $('body').on( 'hover', '#create_customer > div', function(){
+  	var attr = $(this).attr('data-hull-deployment');
+    if (typeof attr !== typeof undefined && attr !== false) {
+      $(this).remove();
+  	}
+  });
+</script>

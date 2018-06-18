@@ -1,0 +1,19 @@
+{% if settings.enable_filerby_color %}
+<div class="widget sidebar-color">
+  <h3 class="widget__title"> {{ settings.filerby_color_title }}<a href="javascript:void(0)" class="clear" style="display:none">clear</a> </h3>
+
+  <div class="wiget__content">
+    <ul class="colors square">
+      {% for i in (1..2) %}
+      {% capture filerby_color_text %}filerby_color_text_{{ i }}{% endcapture %}
+      {% if settings[filerby_color_text] != blank %}
+      {% assign color = settings[filerby_color_text] | strip %}
+
+
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+

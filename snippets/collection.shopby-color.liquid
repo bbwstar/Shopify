@@ -1,0 +1,31 @@
+{% if settings.widget_catalog_color_enable %}
+  
+<div class="widget filter-custom filter-tag color">
+  <h3 class="filter-title widget-title"> {{ settings.widget_catalog_color_title }}<a href="javascript:void(0)" class="clear" style="display:none">clear</a> </h3>
+  
+  <div class="filter-content">
+   <ul class="box-grid-stype colors list-border">
+      {% for i in (1..12) %}
+        {% capture shop_by_color_text %}widget_catalog_color_text_{{ i }}{% endcapture %}
+		
+        {% if settings[shop_by_color_text] != blank %}
+          {% assign tag = settings[shop_by_color_text] | strip %}
+          {% assign tag_value = tag | handleize %} 
+          {% if collection.tags contains tag or collection.tags contains tag_value %}
+            <li class="li-color{% if current_tags contains tag or current_tags contains tag_value %} active{% endif %}">
+
+              {% assign tag_value = tag | handleize %}
+              <input type="checkbox" value="{{ tag_value }}" {% if current_tags contains tag %}checked{% endif %}/>
+              <a href="javascript:void(0)" title="{{tag}}">
+                <span class="color {{tag_value}}"></span>
+                <span class="name">{{tag_value}}</span>
+              </a>
+
+            </li>
+          {% endif %}
+        {% endif %}      
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}

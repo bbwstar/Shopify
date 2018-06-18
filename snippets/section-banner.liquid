@@ -1,0 +1,27 @@
+<!-- /templates/snippets/section-banner.liquid -->
+
+
+<div class="section-banner space-140">
+
+  <div class="grid">
+    <div class="grid__item large--one-half">
+      {% capture _image %}banner_image.jpg{% endcapture %}
+      {% if settings.banner_image_enable %}
+        <img src="{{ _image | asset_url }}" alt="">
+      {% endif %}
+    </div>
+    <div class="grid__item large--one-half ">
+      <div class="text-center description-infor space-padding-120">
+      <h3 class="title"><span>{{ settings.banner_title }}</span></h3>
+      {% if settings.banner_description %}
+        <p class="description">{{ settings.banner_description }}</p>
+      {% endif %}
+
+      {% if settings.banner_button != blank %}
+        <a class="btn btn-outline btn-default" href="{{ settings.banner_button_url }}">{{ settings.banner_button }}</a>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+  
+</div>

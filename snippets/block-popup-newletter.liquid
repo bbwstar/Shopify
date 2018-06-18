@@ -1,0 +1,62 @@
+<!-- /templates/snippets/block-popup-newletter.liquid -->
+
+{% capture _image %}popup_newsletter_image.jpg{% endcapture %}
+{% if settings.footer_block_4_newsletter_form_action != blank %}
+    {% assign form_action = settings.footer_block_4_newsletter_form_action %}
+{% else %}
+    {% assign form_action = '#' %}
+{% endif %}
+<div id="popup-newletter" class="hide popup-newletter" {% if settings.popup_newsletter_image_enable %}style="background:url({{ _image | asset_url }}) no-repeat;"{% endif %}>
+    <div class="grid">
+        <div class="grid__item">
+          	<p class="pnewle-subtitle">
+                {{settings.popup_newsletter_subtitle}}
+            </p>
+            <h3 class="title">
+                {{settings.popup_newsletter_title}}
+            </h3>
+            
+            <div class="popup-form">
+          		<form action="{{ form_action }}" method="post" target="_blank" class="input-group">
+                    <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}" name="EMAIL" placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" class="newsletter-input input-group-field" aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}" >
+                    <span class="clear-submit">
+                    <input type="submit" class="button_mini btn btn-primary btn-more" value="{{ 'general.newsletter_form.submit' | t }}">
+                    </span>
+                  	<div class="remenber-show">
+                      <input type="checkbox" id="dont_show_this" name="dont_show_this" value="1">
+                      <label for="dont_show_this">{{ settings.popup_newsletter_dont_show_title }}</label>
+                    </div>
+                </form>
+          	</div>
+            
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function($){
+      	var date = new Date();
+      	var minutes = 120;
+        date.setTime(date.getTime() + (minutes * 60 * 1000));
+        if ($.cookie('popupNewLetterStatus') != 'closed') {
+            $.fancybox.open({
+                padding: 0,
+              	overlayOpacity:	0.3,
+              	overlayColor: '#333333',
+        		'beforeLoad': function(){
+			        $("#popup-newletter").removeClass('hide');
+			        var Form = $("mc-embedded-subscribe-form").clone();
+			    },
+        		href: "#popup-newletter",
+              	helpers:  {
+                  overlay : true
+                },
+        		afterClose : function(){
+        			$("#popup-newletter").addClass('hide');
+                    if($("#dont_show_this").is(':checked')) {
+                      $.cookie('popupNewLetterStatus', 'closed', {expires:date, path:'/'});
+                    }
+           		}
+            });
+        }
+    });
+</script>

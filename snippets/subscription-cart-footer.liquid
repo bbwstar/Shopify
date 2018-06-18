@@ -1,0 +1,198 @@
+
+<!-- Subscriptions Powered by ReCharge Payments: Begin Liquid Code -->
+<!--
+	Subscription Cart Footer
+	http://rechargepayments.com: v2
+	Updated: 2017/06/12
+-->
+{% comment %}
+	to install, insert:
+	{% include 'subscription-cart-footer' %}
+	at the top of cart.liquid page
+	for best results, add this in the checkout button/input on templates/cart.liquid:
+	{% if cart_has_subscription_item == 'true' %}
+		onclick="event.preventDefault(); reChargeSaveCartNoteAndRedirect()"
+	{% endif %}
+{% endcomment %}
+{% assign cart_has_subscription_item = 'false' %}
+{% for i in cart.items %}
+	{% for p in i.properties %}
+		{% if p.first == 'shipping_interval_frequency' %}
+			{% assign cart_has_subscription_item = 'true' %}
+		{% endif %}
+	{% endfor %}
+{% endfor %}
+{% if cart_has_subscription_item == 'true' %}
+	<style>
+		form[action^="/cart"] [type="submit"] {
+			display: none;
+		}
+		.extra-checkout-buttons,
+		.additional-checkout-button,
+		.additional-checkout-buttons,
+		.amazon-payments-pay-button,
+		.google-wallet-button-holder,
+		#additional-checkout-buttons,
+		#a_p_c {
+			display: none !important;
+		}
+	</style>
+	<script>
+		// Subscriptions Powered by ReCharge Payments: JavaScript
+		(function() {
+			// Basic function to load script files, will be used to include jQuery
+			var loadScript = function(url, callback) {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				// If the browser is Internet Explorer
+				if (script.readyState){ 
+					script.onreadystatechange = function() {
+						if (script.readyState == "loaded" || script.readyState == "complete") {
+							script.onreadystatechange = null;
+							callback();
+						}
+					};
+				// For any other browser
+				} else {
+					script.onload = function() {
+						callback();
+					};
+				}
+				script.src = url;
+				document.getElementsByTagName("head")[0].appendChild(script);
+			};
+			// This is our JavaScript that we'll run after jQuery is included
+			var reChargeShowButton = function($) {
+				$('form[action^="/cart"] [type="submit"]').show();
+			}
+			var reChargeCartFooterJS = function($) {
+				function reChargeGetCookie(name) {
+					return (document.cookie.match('(^|; )' + name + '=([^;]*)')||0)[2];
+				}
+				function reChargeReDirection(redirect_url) {
+					// Re-direct customer to desired URL
+					window.location.href = redirect_url;
+				}
+				function reChargeBuildCheckoutURL() {
+					// Build the Checkout URL
+					var myshopify_domain = '{{ shop.permanent_domain }}';
+					var token = reChargeGetCookie('cart');
+					try {
+						// Cross-domain tracking with Google Analytics
+						var ga_linker = ga.getAll()[0].get('linkerParam');
+					} catch (e) {
+						// 'ga' is not available
+						var ga_linker = '';
+					}
+					// Customer email address for use in the Checkout URL
+					var customer_param = '{% if customer %}customer_id={{ customer.id }}&customer_email={{ customer.email }}{% endif %}';
+					var checkout_url = 'https://checkout.rechargeapps.com/r/checkout?myshopify_domain=' + myshopify_domain + '&cart_token=' + token + '&' + ga_linker + '&' + customer_param
+					return checkout_url;
+				}
+				function reChargeUpdateURLs() {
+					// Map hidden product handles back to their original product handle
+					{% for item in cart.items %}
+						{% if item.product.metafields.subscriptions.original_handle %}
+							var handle = "{{ item.product.url }}";
+							var original_product_handle = "{{ item.product.metafields.subscriptions.original_handle }}";
+							var elements_to_update = $('a[href*="' + handle + '"]');
+							elements_to_update.each(function() {
+								$(this).attr('href', "products/" + original_product_handle);
+							});
+						{% endif %}
+					{% endfor %}
+				}
+				function reChargeSaveCartNoteAndRedirect() {
+					// Build the Checkout URL for later redirection
+					var checkout_url = reChargeBuildCheckoutURL();
+					try {
+						var has_cart_note_or_attribute = false;
+						var data = {};
+						// Store the Customer's response to the Terms and Conditions
+						if ($('#terms, #agree').val() != undefined) {
+							data['terms_and_conditions'] = $('#terms, #agree').val();
+							has_cart_note_or_attribute = true;
+						}
+						// Save Cart Attributes
+						$('[name*="attributes"]').each(function() {
+							var input = $(this);
+							var input_type = $(this).attr('type');
+							if (input.val() != '' && ((input_type != 'radio' && input_type != 'checkbox') || (input_type == 'radio' && input.is(':checked')) || (input_type == 'checkbox' && input.prop('checked')))) {
+								var name_attr = input.attr('name');
+								data[name_attr] = input.val();
+								has_cart_note_or_attribute = true;
+							}
+						});
+						// Save Cart Note
+						if ($('[name="note"]:visible').val() != "undefined") {
+							data['note'] = $('[name="note"]:visible').val();
+							has_cart_note_or_attribute = true;
+						}
+						// If store has either Terms and Conditions, Cart Attributes, or Notes, send data to update.js
+						if (has_cart_note_or_attribute) {
+							$.ajax({
+								type: 'POST',
+								data: data,
+								url: '/cart/update.js',
+								dataType: 'json',
+								success: function() {
+									// Redirect to ReCharge checkout after notes have been saved
+									reChargeReDirection(checkout_url);
+								}
+							});
+						} else {
+							// Redirect to ReCharge checkout
+							reChargeReDirection(checkout_url);
+						}
+					} catch (e) {
+						console.log(e);
+						// If an error occured, we'll still redirect customers to the ReCharge checkout.
+						reChargeReDirection(checkout_url);
+					}
+				}
+				$(document).ready(function() {
+					// Can use this by default or the onclick attribute directly
+					reChargeUpdateURLs();
+					var checkout_button_selectors = '[name="checkout"], [href="/checkout"], form[action="/checkout"] input[type="submit"], .checkout_button';
+					$(document).on('click', checkout_button_selectors, function(e) {
+						if (!$(this).data('disable-recharge')) {
+							e.preventDefault();
+							reChargeSaveCartNoteAndRedirect();
+						}
+					});
+					reChargeShowButton($)
+				});
+			}
+			// Check if jQuery is added, if not, then we'll loadScript, otherwise, run reChargeJS
+			if ((typeof(jQuery) == 'undefined') || (parseInt(jQuery.fn.jquery) == 1 && parseFloat(jQuery.fn.jquery.replace(/^1\./,"")) < 7.2)) {
+				// We'll get our jQuery from Google APIs
+				loadScript('//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', function() {
+					jQuery172 = jQuery.noConflict(true);
+					setTimeout(function() {
+						try {
+							reChargeCartFooterJS(jQuery172);
+						}
+						catch (err) {
+							console.error('Error with function "reChargeCartFooterJS"', err);
+							reChargeShowButton(jQuery172);
+						}
+					}, 1);
+				});
+			} else {
+				setTimeout(function() {
+					try {
+						reChargeCartFooterJS(jQuery);
+					}
+					catch (err) {
+						console.error('Error with function "reChargeCartFooterJS"', err);
+						reChargeShowButton(jQuery);
+					}
+				}, 1);
+			}
+		})();
+		// If page is loaded from cache (browser back/forward button), force page reload
+		window.addEventListener('pageshow', function (event) { if (event.persisted || window.performance && 
+		window.performance.navigation.type == 2) { window.location.reload(); } }, false);
+	</script>
+{% endif %}
+<!-- Subscriptions Powered by ReCharge Payments: End Liquid Code -->

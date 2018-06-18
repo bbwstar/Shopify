@@ -1,0 +1,21 @@
+<!-- /templates/snippets/section-products.liquid -->
+
+<div class="section-products widget space-50 space-top-{{ settings.margin-top-section }}">
+  
+  {% assign products_limit = settings.products_number %}
+  {% assign col = settings.products_collection %}
+
+  {% if settings.products_title != blank %}
+    <div class="space-25 text-center clearfix">
+    <h3 class=" widget-title title-md">{{ settings.products_title }}</h3>
+    </div>
+  {% endif %}
+  <div class="owl-carousel" data-items="{{ settings.products_number_column }}" data-smallmedium="2" data-extrasmall="1" data-carousel="owl" data-pagination="false" data-nav="true">
+    {% for product in collections[col].products limit: products_limit %}
+      {% include 'product-item' %}
+    {%else%}
+      {% include 'onboarding-empty-collection' %}
+    {% endfor %}
+  </div>
+
+</div>

@@ -1,0 +1,139 @@
+<div id="main">
+
+  <div class="main-header background " style=" background-image: url({{ 'heading-contact.jpg' | asset_url }}); }">
+    <div class="container">
+      <h1>{{ page.title }}</h1>
+    </div>
+  </div>
+
+
+
+  <div class="contact-wrapper">
+    <div class="margin-bottom-100">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="contact-content">
+              <div class="contact-header">
+                <div class="contact-image" style="text-align: left;">
+        {{ 'contact_content_img.jpg' | asset_url | img_tag }}
+                </div>
+                <p>{{settings.contact_content_des}}</p>
+              </div>
+              <!-- /.contact-header -->
+              <div class="contact-block">
+                <h3>{{settings.contact_content_shop_info}}</h3>
+                {{settings.contact_content_shop_info_des}}
+              </div>
+              <!-- /.contact-block -->
+              <div class="contact-block">
+                <h3>{{settings.contact_content_customer}}</h3>
+                {{settings.contact_content_customer_des}}
+              </div>
+              <!-- /.contact-block -->
+            </div><!-- /.contact-content -->
+          </div><!-- /.col-md-6 -->
+
+          <div class="col-md-6">
+            <div class="contact-content">
+              <div class="contact-form-heading">
+                <h2>{{settings.contact_form_title}}</h2>
+                <p>{{settings.contact_form_des}}</p>
+              </div><!-- /.contact-content -->
+
+              <div id="ajax-message"></div>
+              {% form 'contact' %}
+
+              {% if form.posted_successfully? %}
+              <div class="successForm feedback">
+                <p>{{ 'contact.form.success' | t }}</p>
+              </div>
+              {% endif %}
+
+              {% if form.errors %}
+              <div class="errorForm feedback">
+                <p>{{ 'contact.errors.errors_with_count' | t: count: form.errors.count }}</p>
+
+                {% for field in form.errors %}
+                <p>{{ 'contact.errors.message_html' | t: field: field, error: form.errors.messages[field] }}</p>
+                {% endfor %}
+              </div>
+              {% endif %}
+               {{ form.errors | default_errors }}
+         {% assign name_attr = 'contact.form.name' | t | handle %}
+
+                <div class="form-group">
+                  <label >{{ 'contact.form.name' | t }}</label>
+                  <input class="form-control dark" type="text" id="ContactFormName" name="contact[{{ name_attr }}]" placeholder="{{ 'contact.form.name' | t }}" autocapitalize="words" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+
+                </div><!-- /.form-group -->
+
+                <div class="form-group">
+                  <label >{{ 'contact.form.email' | t }}</label>
+                  <input class="form-control dark" type="email" id="ContactFormEmail" name="contact[email]" placeholder="{{ 'contact.form.email' | t }}" autocorrect="off" autocapitalize="off" value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
+                </div><!-- /.form-group -->
+
+                <div class="form-group">
+                  <label >{{ 'contact.form.phone' | t }}</label>
+                  <input class="form-control dark" type="tel" id="ContactFormPhone" name="contact[{{ name_attr }}]" placeholder="{{ 'contact.form.phone' | t }}" pattern="[0-9\-]*" value="{% if form[name_attr] %}{{ form[name_attr] }}{% elsif customer %}{{ customer.phone }}{% endif %}">
+                </div><!-- /.form-group -->
+
+                <div class="form-group">
+                  <label >{{ 'contact.form.message' | t }}</label>
+                  <textarea class="form-control dark" rows="7" id="ContactFormMessage" name="contact[body]" placeholder="{{ 'contact.form.message' | t }}">{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+
+                </div><!-- /.form-group -->
+
+                <div class="form-button">
+                  <button type="submit" class="btn btn-lg btn-dark">{{ 'contact.form.submit' | t }}</button>
+                </div><!-- /.form-button -->
+
+              {% endform %}
+            </div>
+          </div><!-- /.col-md-6 -->
+        </div><!-- /.row -->
+      </div><!-- /.container -->
+    </div><!-- /.margin-bottom-100 -->
+    {%if settings.contact_map%}
+    <div class="contact-map" id="contact-map"  data-lat="{{settings.contact_map_1}}" data-lng="{{settings.contact_map_2}}">
+      <!-- // -->
+    </div><!-- /.contact-map -->
+    {%endif%}
+
+
+  </div><!-- /.contact-wrapper -->
+
+
+  <script type="text/javascript">
+
+    $(function() {
+      aweMaps();
+
+      $('#contact-form').on('submit', function() {
+        var $form = $(this);
+        var data = $(this).serialize();
+
+        $.ajax({
+          url: 'contact.php',
+          type: 'POST',
+          data: data,
+        })
+        .done(function(res) {
+          if (res && ! $(res).hasClass('failure')) {
+            $form.find('input, textarea').val('');
+          }
+        })
+        .always(function(res) {
+          $('#ajax-message').html(res);
+        });
+
+        return false;
+      });
+    });
+
+  </script>
+</div>
+
+
+

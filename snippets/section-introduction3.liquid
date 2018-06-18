@@ -1,0 +1,26 @@
+<!-- /templates/snippets/section-introduction.liquid -->
+
+<div class="section-introduction text-center widget space-top-{{ settings.margin-top-section }}">
+
+  <h3 class="widget-title title-lg space-10"><span>{{ settings.introduction_title3 }}</span></h3>
+  
+  {% capture _image %}introduction_image3.jpg{% endcapture %}
+  {% if settings.introduction_image_enable3 %}
+    <img src="{{ _image | asset_url }}" alt="">
+  {% endif %}
+
+  <div class="widget-content">
+    {% if settings.introduction_subtitle3 %}
+      <h2>{{ settings.introduction_subtitle3 }}</h2>
+    {% endif %}
+
+    {% if settings.introduction_description3 %}
+      <p class="description">{{ settings.introduction_description3 }}</p>
+    {% endif %}
+
+    {% if settings.introduction_button3 %}
+      <a href="{{ settings.introduction_button_url3 }}" class="btn btn-primary">{{ settings.introduction_button3 }}</a>
+    {% endif %}
+  </div>
+</div>
+

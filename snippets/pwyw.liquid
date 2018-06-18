@@ -1,0 +1,179 @@
+{% comment %}
+This file is managed by the Pay What You Want plugin. Modifying this may void your warranty!
+{% endcomment%}
+
+{% if template contains 'product' %}
+{% assign product_tags = product.tags | downcase %}
+
+{% if product_tags contains 'pwyw' %}
+
+<div style="display:none">
+  	<input type="text" name="productPricePWYW" id="productPricePWYW" min="0"
+           onkeypress="return isNumberPWYW(event)"
+           style="display: inline; width: auto; font-size: inherit; line-height: 1.1em; height: 100%;"
+           placeholder="Pay what you want!"
+    />
+
+  	<input type="button" id="addToCartPWYW" class="btn addToCartPWYW" name="add-pwyw" value="Add to Cart">
+</div>
+<script type="text/javascript" src="//cdn.shopify.com/s/shopify/api.jquery.js"></script>
+<script type="text/javascript">
+    function isNumberPWYW(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+
+ 		if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 46)
+    		return false;
+
+ 		return true;
+    }
+
+  function pwywInit() {
+  	Shopify.queue = [];
+    $(window).on('load', function () {
+      setTimeout(function() {
+        var inputPWYW = document.querySelector("#productPricePWYW");
+        $(inputPWYW).remove();
+        var buttonPWYW = document.querySelector("#addToCartPWYW");
+        $(buttonPWYW).remove();
+
+        var priceLabels = document.querySelectorAll(".current_price, .price-field, .price, .product-single__price, .product-price, #productPrice, #ProductPrice");
+        if(priceLabels) {
+            for (var priceLabel in priceLabels) {
+          		if (priceLabels.hasOwnProperty(priceLabel)) {
+                    priceLabels[priceLabel].innerHTML += " + " + inputPWYW.outerHTML;
+          		}
+            }
+        }
+
+        if(document.querySelector('form[action="/cart/add"] [type="submit"]')) {
+            $(document.querySelector('form[action="/cart/add"] [type="submit"]')).remove();
+        }
+        if(document.querySelector("#add-to-cart")) $(document.querySelector("#add-to-cart")).remove();
+        if(document.querySelector("#AddToCart")) $(document.querySelector("#AddToCart")).remove();
+        if(document.querySelector("#addToCart")) $(document.querySelector("#addToCart")).remove();
+
+        var offerForms = document.querySelectorAll('form[action="/cart/add"]');
+        if(offerForms) {
+          for (var offerForm in offerForms) {
+            if (offerForms.hasOwnProperty(offerForm)) {
+              offerForms[offerForm].innerHTML += buttonPWYW.outerHTML;
+            }
+          }
+        }
+
+        // get default parameter
+      	var query = window.location.search.substring(1);
+      	var vars = query.split("&");
+      	for (var index = 0; index < vars.length; index++) {
+          var pair = vars[index].split("=");
+          if (pair[0] === "default") {
+            $("#productPricePWYW").val(parseInt(pair[1]))
+          }
+        }
+
+        var addToCartButtons = document.querySelectorAll('form[action="/cart/add"] input.addToCartPWYW');
+
+        for (var addToCartButton in addToCartButtons) {
+            if (addToCartButtons.hasOwnProperty(addToCartButton)) {
+                addToCartButtons[addToCartButton].onclick = function(e) {
+                  $button = $ (this);
+                  $productPrice = $("#productPricePWYW");
+
+                  if ($("#productPricePWYW").val() === "") $("#productPricePWYW").attr('value', '0');
+
+                  $.ajax({
+                    type: "POST",
+                    url: "//paywhatyouwantapp.com/api/create-new-variant/772241465ee4b5fcdc496779d8ecb3ce",
+                    crossDomain: true,
+                    data: {
+                      productPricePWYW:  parseFloat($productPrice.val()),
+                      productId: {{ product.id }}
+                    },
+                    dataType: "json",
+                    success: function (responseData, textStatus, jqXHR) {
+                      var propertyFields = document.querySelectorAll('[name^="properties"]');
+
+                      var propertyObj = {}
+                      Array.prototype.forEach.call(propertyFields, function(e,f,b) {
+                        propertyObj[e.name.substr(11).replace(']', '')] = e.value;
+                      });
+
+                      var quantityField = document.querySelector('[name="quantity"]')
+                      var quantity = quantityField ? document.querySelector('[name="quantity"]').value : 1;
+
+                      for(var variantId in responseData){
+                        Shopify.queue.push( {
+                          variantId: responseData[variantId],
+                          quantity: quantity,
+                          properties: propertyObj
+                        });
+                      }
+                      Shopify.moveAlong();
+                    },
+                    error: function (responseData, textStatus, errorThrown) {
+                        console.log(responseData);
+                    }
+                	});
+                }
+            }
+        }
+        //end Set Timeout
+      }, 500);
+
+      Shopify.onSuccess = function () {
+          var elem = $("#addToCartButtonPWYW");
+          elem.removeAttr("disabled");
+          document.location.href = "/cart";
+      };
+
+      Shopify.moveAlong = function() {
+          // If we still have requests in the queue, let's process the next one.
+          if (Shopify.queue.length) {
+            var request = Shopify.queue.shift();
+
+            jQuery.post('/cart/add.js', {
+              quantity: request.quantity,
+              id: request.variantId,
+              properties: request.properties,
+              success:  function(e,f,b) {
+                setTimeout(function() {
+                	Shopify.moveAlong();
+                }, 1000);
+              }
+		      	});
+          } else {
+            // If the queue is empty, we will redirect to the cart page.
+            document.location.href = '/cart';
+          }
+      };
+
+      Shopify.onError = function (XMLHttpRequest, textStatus) {
+          // Shopify returns a description of the error in XMLHttpRequest.responseText.
+          // It is JSON.
+          // Example: {"description":"The product "Amelia - Small" is already sold out.","status":500,"message":"Cart Error"}
+          var data = eval("(" + XMLHttpRequest.responseText + ")");
+          if (!!data.message) {
+              alert(data.message + "(" + data.status + "): " + data.description);
+          }
+          else {
+              alert("Error : " + Shopify.fullMessagesFromErrors(data).join("; ") + ".");
+          }
+          $("#addToCartButtonPWYW").removeAttr("disabled");
+      };
+    });
+  }
+
+  if(typeof jQuery=='undefined') {
+    var headTag = document.getElementsByTagName("head")[0];
+    var jqTag = document.createElement('script');
+    jqTag.type = 'text/javascript';
+    jqTag.src = '//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js';
+    jqTag.onload = pwywInit;
+    headTag.appendChild(jqTag);
+  } else {
+    pwywInit();
+  }
+</script>
+
+{% endif %}
+{% endif %}
